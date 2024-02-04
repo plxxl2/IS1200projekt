@@ -15,12 +15,13 @@ asdf
 #include "mipslab.h"  /* Declatations for these labs */
 #include <stdio.h>
 #include <math.h>
-#include <string.h>
 #include "golf.h"
 
 
 #define PI 3.14159
-int startcount = 50;
+#define MIN_BALL_SPEED 0.2
+
+int startcount = 50; //some of these, (at least ballsize) can be defines instead, some are leftovers from labs. (textstring at least)
 double ballx = 16;
 double bally = 25;
 double balldx, balldy;
@@ -107,7 +108,7 @@ void user_isr( void )
 	//update_display();
 }
 
-void set_scorecard( void ){
+void set_scorecard( void ){ //Updates the scorecard text
 	display_string(0, "Score: ");
 	//num32asc( &textbuffer[0][8], itoaconv(currentscore) );
 	//set_Char (0, 4, itoaconv(currentscore));
@@ -117,7 +118,9 @@ void set_scorecard( void ){
 
 }
 
-void advance_game( void){
+void advance_game( void){ //advances the game 1 frame. om gamestate = aiming, ritar sikte, flyttar sikte om knapper trycks. om gamestate = charging, ändrar charge variablen + medföljande lampor
+// om gamestate = moving, flyttar bollen, samt går tillbaka till aiming om bollens hastighet är låg.
+// alla gamestates: ritar nästa frame på skärmen.
 	int i,j;
 	//display_myimage(96);
 	//draw_pixel(5,5);
@@ -169,7 +172,7 @@ void advance_game( void){
 			break;
 		case(moving):
 			moveball();
-			if (ballvelocity < 0.2){
+			if (ballvelocity < MIN_BALL_SPEED){
 				ballvelocity = 0;
 				current_game_state = aiming;
 			}
@@ -179,7 +182,7 @@ void advance_game( void){
 			//default stuff if no state
 	}
 	 
-	set_ball((int)(ballx + 0.5), (int)(bally+0.5));
+	set_ball((int)(ballx + 0.5), (int)(bally+0.5)); //runder upp bollkoordinater om dom är över  x.5.
 	update_display();
 }
 
