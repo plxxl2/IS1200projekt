@@ -15,7 +15,9 @@ asdf
 #include "mipslab.h"  /* Declatations for these labs */
 #include <stdio.h>
 #include <math.h>
+#include <string.h>
 #include "golf.h"
+
 
 #define PI 3.14159
 int startcount = 50;
@@ -26,6 +28,8 @@ double balldirection;
 double aim = PI/2;
 double ballvelocity = 1;
 int ballsize = 3;
+int totalscore;
+int currentscore;
 uint8_t collisionmap[32][128];
 int x = 1;
 uint8_t charge = 0;
@@ -33,6 +37,7 @@ uint8_t chargingup;
 int timeoutcount = 50;
 char textstring[] = "text, more text, and even more text!";
 static enum gamestate current_game_state = aiming;
+static enum gamestate previous_game_state;
 static enum menustate current_menu_state = intro;
 
 void moveball( void ){
@@ -74,11 +79,15 @@ void user_isr( void )
 		case(playing):
 				advance_game();
 			break;
+		case(scorecard):
+			set_scorecard();
+			display_update();
+			break;
 		//default:	
 	
 	}
 	
-	update_display();
+	
 /* 	for (i = 0; i < 32; i++){
 		for (j = 0; j < 1; j++){
 			//if (((j+x) % 2) == 0){
@@ -87,6 +96,16 @@ void user_isr( void )
 		}
 	} */
 	//update_display();
+}
+
+void set_scorecard( void ){
+	display_string(0, "Score: ");
+	//num32asc( &textbuffer[0][8], itoaconv(currentscore) );
+	set_Char (0, 4, itoaconv(currentscore));
+	display_string(1, itoaconv(currentscore));
+	display_string(2, "Total: ");
+	display_string(3, itoaconv(totalscore + currentscore));
+
 }
 
 void advance_game( void){
@@ -100,10 +119,10 @@ void advance_game( void){
 	set_map(); //nollställer displayen till mappen
 	switch (current_game_state){
 		case(aiming):
-				if ((btns & 2 ) == 2){
+				if ((btns & 4 ) == 4){
 					aim+= PI/180;
 				}
-				if ((btns & 1 )== 1){
+				if ((btns & 2 )== 2){
 					aim-= PI/180;
 				}
 				draw_aim(ballx, bally, aim);
@@ -116,7 +135,7 @@ void advance_game( void){
 				break;
 			}
 			timeoutcount = 5;
-			if ((btns & 4 ) == 4){ //charge button is being held down, we increase the charge
+			if ((btns & 8 ) == 8){ //charge button is being held down, we increase the charge
 				if (charge == 8) chargingup = 0;
 				if (charge == 0) chargingup = 1;
 				if (chargingup == 1){
@@ -136,6 +155,7 @@ void advance_game( void){
 				*leds = *leds & 0x00;
 				//next_state = moving;
 				current_game_state = moving;
+				currentscore++;
 			}
 			break;
 		case(moving):
@@ -145,12 +165,13 @@ void advance_game( void){
 				current_game_state = aiming;
 			}
 			break;
+			
 		//default:
 			//default stuff if no state
 	}
 	 
 	set_ball((int)(ballx + 0.5), (int)(bally+0.5));
-
+	update_display();
 }
 
 void load_map(void){
@@ -185,6 +206,7 @@ void labinit( void )
 	//volatile int* inputs = (volatile int*) addresss;
 	//*inputs = *inputs & 4064; // 0b111111100000
 	TRISD = TRISD | 4064;
+	TRISFSET = 1;
 	// TRISE = TRISE (0xbf886100) | 0xFF; // Means TRISE xxxxxxxxxxxxxxxxxxxxxxxxx -> xxxxxxxxxxxxxxxxx11111111
 	//T2CON = 15 = 1  6-4 = 111 0x8070   15 14 13 12  11 10 9 8    7 6 5 4   3 2 1 0
 	TMR2 = 0;  // reset timer register
@@ -296,14 +318,22 @@ void labwork( void )
 	enum gamestate next_state;
 	int btns= getbtns(); 
 	
-	
+	if ((btns & 1) == 1) {
+		*leds = *leds | 1;
+		current_menu_state = scorecard;
+		//current_game_state = scorecard;
+	} else {
+		*leds = *leds & 0xFE;
+		current_menu_state = playing;
+		//current_game_state = previous_game_state; // value is not restored
+	}
 	switch(current_game_state){
 			case(aiming):
 				//if (ballx > 128 | ballx < 0) ballx = 16;
 				//if (bally > 32 | bally < 0) bally = 16;
 				// Positon i koden; då addition på mytime kan gå out of bounds av klockans bas 60, och det hanteras av tick(), så vill vi att tick() kallas mellan denna addition & displayupdate
-				if ((btns & 4 ) == 4){
-					*leds = *leds | (btns*16);
+				if ((btns & 8 ) == 8){ // 4 -> 8
+					//*leds = *leds | (btns*16); // old test function, led 3 + 4 = 7 lights up
 					charge = 0;
 					timeoutcount = 5;
 					chargingup = 1;
@@ -318,7 +348,7 @@ void labwork( void )
 				break;
 			
 			case(charging):
-				if ((btns & 4 ) == 4){ //charge button is being held down, we increase the charge
+				if ((btns & 8 ) == 8){ //charge button is being held down, we increase the charge
 					//if (charge == 7) chargingup = 0;
 					//if (charge == 0) chargingup = 1;
 					//if (chargingup == 1){

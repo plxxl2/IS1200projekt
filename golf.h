@@ -18,4 +18,4 @@
 enum gamestate {aiming, charging, moving};
 
 //should be in game.h when its made
-enum menustate {intro, menu, playing}; // can add different menu states example highscore etc, to show where in hte menu you are.
+enum menustate {intro, menu, playing, scorecard}; // can add different menu states example highscore etc, to show where in hte menu you are.

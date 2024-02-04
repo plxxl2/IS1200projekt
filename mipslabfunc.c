@@ -11,7 +11,7 @@
 #include "golf.h"
 
 /* Declare a helper function which is local to this file */
-static void num32asc( char * s, int ); 
+//void num32asc( char * s, int, int ); 
 
 #define DISPLAY_CHANGE_TO_COMMAND_MODE (PORTFCLR = 0x10)
 #define DISPLAY_CHANGE_TO_DATA_MODE (PORTFSET = 0x10)
@@ -110,7 +110,7 @@ void draw_aim(double ballx, double bally, double aim){
 	set_pixel ((int)ballx + 11, (int)bally);  */
 }
 
-void draw_pixel(int x, int y){
+/* void draw_pixel(int x, int y){
 	int row = y % 8;
 	int page = (y - row) / 8;
 	
@@ -145,11 +145,11 @@ void draw_pixel(int x, int y){
 	//for(j = 0; j < 32; j++)
 		//spi_send_recv(~data[i*32 + j]);
 
-}
+} */
 
 
 
-void display_myimage(int x) {
+/* void display_myimage(int x) {
 	int i, j;
 	
 	for(i = 0; i < 4; i++) {
@@ -174,7 +174,7 @@ void display_myimage(int x) {
 		for(j = 0; j < 32; j++)
 			spi_send_recv(~255);  //0b 1111
 	}
-}
+} */
 
 
 void update_display(void){
@@ -219,32 +219,32 @@ uint8_t reverse (uint8_t input){
    3rd pair counts minutes.
    4th pair (least significant byte) counts seconds.
    In most labs, only the 3rd and 4th pairs are used. */
-void tick( unsigned int * timep )
-{
-  /* Get current value, store locally */
-  register unsigned int t = * timep;
-  t += 1; /* Increment local copy */
+// void tick( unsigned int * timep )
+// {
+  // /* Get current value, store locally */
+  // register unsigned int t = * timep;
+  // t += 1; /* Increment local copy */
   
-  /* If result was not a valid BCD-coded time, adjust now */
+  // /* If result was not a valid BCD-coded time, adjust now */
 
-  if( (t & 0x0000000f) >= 0x0000000a ) t += 0x00000006;
-  if( (t & 0x000000f0) >= 0x00000060 ) t += 0x000000a0;
-  /* Seconds are now OK */
+  // if( (t & 0x0000000f) >= 0x0000000a ) t += 0x00000006;
+  // if( (t & 0x000000f0) >= 0x00000060 ) t += 0x000000a0;
+  // /* Seconds are now OK */
 
-  if( (t & 0x00000f00) >= 0x00000a00 ) t += 0x00000600;
-  if( (t & 0x0000f000) >= 0x00006000 ) t += 0x0000a000;
-  /* Minutes are now OK */
+  // if( (t & 0x00000f00) >= 0x00000a00 ) t += 0x00000600;
+  // if( (t & 0x0000f000) >= 0x00006000 ) t += 0x0000a000;
+  // /* Minutes are now OK */
 
-  if( (t & 0x000f0000) >= 0x000a0000 ) t += 0x00060000;
-  if( (t & 0x00ff0000) >= 0x00240000 ) t += 0x00dc0000;
-  /* Hours are now OK */
+  // if( (t & 0x000f0000) >= 0x000a0000 ) t += 0x00060000;
+  // if( (t & 0x00ff0000) >= 0x00240000 ) t += 0x00dc0000;
+  // /* Hours are now OK */
 
-  if( (t & 0x0f000000) >= 0x0a000000 ) t += 0x06000000;
-  if( (t & 0xf0000000) >= 0xa0000000 ) t = 0;
-  /* Days are now OK */
+  // if( (t & 0x0f000000) >= 0x0a000000 ) t += 0x06000000;
+  // if( (t & 0xf0000000) >= 0xa0000000 ) t = 0;
+  // /* Days are now OK */
 
-  * timep = t; /* Store new value */
-}
+  // * timep = t; /* Store new value */
+// }
 
 /* display_debug
    A function to help debugging.
@@ -259,14 +259,14 @@ void tick( unsigned int * timep )
    repeated calls to display_image; display_image overwrites
    about half of the digits shown by display_debug.
 */   
-void display_debug( volatile int * const addr )
-{
-  display_string( 1, "Addr" );
-  display_string( 2, "Data" );
-  num32asc( &textbuffer[1][6], (int) addr );
-  num32asc( &textbuffer[2][6], *addr );
-  display_update();
-}
+// void display_debug( volatile int * const addr )
+// {
+  // display_string( 1, "Addr" );
+  // display_string( 2, "Data" );
+  // num32asc( &textbuffer[1][6], (int) addr );
+  // num32asc( &textbuffer[2][6], *addr );
+  // display_update();
+// }
 
 uint8_t spi_send_recv(uint8_t data) {
 	while(!(SPI2STAT & 0x08));
@@ -318,6 +318,12 @@ void display_string(int line, char *s) {
 			s++;
 		} else
 			textbuffer[line][i] = ' ';
+}
+
+void set_Char (int line, int position, char *s){
+	textbuffer[line][position] = s;
+	/* if(s) textbuffer[line][position] = s;
+	else textbuffer[line][position] = ' '; */
 }
 
 void display_image(int x, const uint8_t *data) {
@@ -394,12 +400,30 @@ void display_update(void) {
 
 /* Helper function, local to this file.
    Converts a number to hexadecimal ASCII digits. */
-static void num32asc( char * s, int n ) 
-{
-  int i;
-  for( i = 28; i >= 0; i -= 4 )
-    *s++ = "0123456789ABCDEF"[ (n >> i) & 15 ];
-}
+// void num32asc( char * s, int n ) 
+// {
+  // int i;
+  // for( i = 28; i >= 0; i -= 4 )
+    // *s++ = n;//"0123456789ABCDEF"[ (n >> i) & 15 ];
+// }
+
+
+// void num32asc( char * s, int n, int sz ) 
+// {
+  // int i;
+  // int bits;
+  // if( sz == 4 ) bits = 28;
+  // else if( sz == 2 ) bits = 12;
+  // else if( sz == 1 ) bits = 4;
+  // else bits = 0;
+  // if( bits )
+    // for( i = bits; i >= 0; i -= 4 )
+      // *s++ = "0123456789ABCDEF"[ (n >> i) & 15 ];
+  // else
+    // for( i = 0; i < 8; i += 1 )
+      // *s++ = "bad size"[ i ];
+// }
+
 
 /*
  * nextprime
