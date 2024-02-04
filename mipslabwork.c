@@ -35,6 +35,7 @@ int x = 1;
 uint8_t charge = 0;
 uint8_t chargingup;
 int timeoutcount = 50;
+int introtimer = 10;
 char textstring[] = "text, more text, and even more text!";
 static enum gamestate current_game_state = aiming;
 static enum gamestate previous_game_state;
@@ -69,9 +70,17 @@ void user_isr( void )
 		case(intro):
 				timeoutcount--;
 				if (timeoutcount != 0){
-					return;
+					break;
+				}
+				introtimer--;
+				timeoutcount = 50;
+				display_string(3, itoaconv(introtimer));
+				display_update();
+				if(introtimer != 0){
+					break;
 				}
 				current_menu_state = playing;
+				
 			break;
 		case(menu):
 				
@@ -101,7 +110,7 @@ void user_isr( void )
 void set_scorecard( void ){
 	display_string(0, "Score: ");
 	//num32asc( &textbuffer[0][8], itoaconv(currentscore) );
-	set_Char (0, 4, itoaconv(currentscore));
+	//set_Char (0, 4, itoaconv(currentscore));
 	display_string(1, itoaconv(currentscore));
 	display_string(2, "Total: ");
 	display_string(3, itoaconv(totalscore + currentscore));
@@ -317,7 +326,7 @@ void labwork( void )
 	//static enum gamestate current_game_state = aiming;
 	enum gamestate next_state;
 	int btns= getbtns(); 
-	
+	if (current_menu_state == intro) return;
 	if ((btns & 1) == 1) {
 		*leds = *leds | 1;
 		current_menu_state = scorecard;
@@ -327,6 +336,7 @@ void labwork( void )
 		current_menu_state = playing;
 		//current_game_state = previous_game_state; // value is not restored
 	}
+	
 	switch(current_game_state){
 			case(aiming):
 				//if (ballx > 128 | ballx < 0) ballx = 16;
