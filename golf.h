@@ -6,13 +6,20 @@
    Latest update 2015-08-28 by F Lundevall
 
    For copyright and licensing, see file COPYING */
+#include <stdint.h>   /* Declarations of uint_32 and the like */
+#include <pic32mx.h>  /* Declarations of system-specific addresses etc */
+#include "mipslab.h"  /* Declatations for these labs */
+#include <stdio.h>
+#include <math.h>   
+   
 
 #define BALL_SLOWDOWN 0.993
-#define AIM_LENGTH 7
+#define PI 3.14
+#define MIN_BALL_SPEED 0.2
+
+
+#define AIM_LENGTH 7 //maybe belongs in display?
 #define AIM_GAP  5
-
-
-
 
 // Enums -----------------
 enum gamestate {aiming, charging, moving};

@@ -10,23 +10,19 @@ asdf
 
    For copyright and licensing, see file COPYING */
 
-#include <stdint.h>   /* Declarations of uint_32 and the like */
-#include <pic32mx.h>  /* Declarations of system-specific addresses etc */
-#include "mipslab.h"  /* Declatations for these labs */
-#include <stdio.h>
-#include <math.h>
+
 #include "golf.h"
 
 
-#define PI 3.14159
-#define MIN_BALL_SPEED 0.2
+
 
 int startcount = 50; //some of these, (at least ballsize) can be defines instead, some are leftovers from labs. (textstring at least)
 double ballx = 16;
 double bally = 25;
 double balldx, balldy;
 double balldirection;
-double aim = PI/2;
+double aim = PI/2; // försöka göra om aim till int
+int intaim = 90;
 double ballvelocity = 1;
 int ballsize = 3;
 int totalscore;
@@ -36,7 +32,7 @@ int x = 1;
 uint8_t charge = 0;
 uint8_t chargingup;
 int timeoutcount = 50;
-int introtimer = 10;
+int introtimer = 3;
 char textstring[] = "text, more text, and even more text!";
 static enum gamestate current_game_state = aiming;
 static enum gamestate previous_game_state;
@@ -49,6 +45,101 @@ void moveball( void ){
 	bally+= ballvelocity * balldy;
 	ballvelocity = ballvelocity * BALL_SLOWDOWN;
 }	
+
+
+
+void set_scorecard( void ){ //Updates the scorecard text
+	display_string(0, "Score: ");
+	display_string(1, itoaconv(currentscore));
+	//num32asc( &textbuffer[0][8], itoaconv(currentscore) );
+	//set_Char (0, 4, itoaconv(currentscore));
+	
+	display_string(2, "Total: ");
+	display_string(3, itoaconv(totalscore + currentscore));
+	
+	//för debugg
+	display_string(2, "intaim: ");
+	display_string(3, itoaconv(intaim));
+}
+
+void advance_game( void){ //advances the game 1 frame. om gamestate = aiming, ritar sikte, flyttar sikte om knapper trycks. om gamestate = charging, ändrar charge variablen + medföljande lampor
+// om gamestate = moving, flyttar bollen, samt går tillbaka till aiming om bollens hastighet är låg.
+// alla gamestates: ritar nästa frame på skärmen.
+	int i,j;
+	//display_myimage(96);
+	//draw_pixel(5,5);
+	//draw_pixel(5,10);
+	//clear_display();
+	volatile int* leds = (volatile int*) 0xbf886110;
+	int btns= getbtns(); 
+	set_map(); //nollställer displayen till mappen
+	switch (current_game_state){
+		case(aiming):
+				if ((btns & 4 ) == 4){
+					//aim+= PI/180;
+					//intaim=intaim+2;
+					intaim++;
+					if (intaim > 359) intaim-=360;
+				}
+				if ((btns & 2 )== 2){
+					//aim-= PI/180;
+					//intaim=intaim-2;
+					intaim--;
+					if (intaim < 0) intaim+=360;
+				}
+				//draw_aim(ballx, bally, aim); //insert intaim -> radianer  *360?
+				draw_aim(ballx, bally, ((double)intaim/(180/PI)));
+				
+				//draw_aim(ballx, bally, (M_PI / 2));
+				//draw_aim(ballx, bally, (M_PI / 4)); //tests to see lines
+			break;
+		case(charging):
+			timeoutcount--;
+			if (timeoutcount != 0){
+				break;
+			}
+			timeoutcount = 5;
+			if ((btns & 8 ) == 8){ //charge button is being held down, we increase the charge
+				if (charge == 8) chargingup = 0;
+				if (charge == 0) chargingup = 1;
+				if (chargingup == 1){
+					charge+= 1;
+					*leds = *leds | 1 <<(8-charge);
+				} else{
+					charge-= 1;
+					*leds = *leds & (0xFF & (0xFF << (8-charge))); // charge = 6 => & 11111110  charge = 5 => && 11111100 charge = 0 7-charge 0s
+				}
+				
+			} else{
+				ballvelocity = 0.1 + (0.2 * charge); //this should be a variable depending on charge to hit harder/softer
+				charge = 0;
+				balldirection = aim;
+				//balldx = cos(aim);
+				//balldy = sin(aim);
+				//intaim
+				balldx = cos(((double)intaim/(180/PI)));
+				balldy = sin(((double)intaim/(180/PI)));
+				*leds = *leds & 0x00;
+				//next_state = moving;
+				current_game_state = moving;
+				currentscore++;
+			}
+			break;
+		case(moving):
+			moveball();
+			if (ballvelocity < MIN_BALL_SPEED){
+				ballvelocity = 0;
+				current_game_state = aiming;
+			}
+			break;
+			
+		//default:
+			//default stuff if no state
+	}
+	 
+	set_ball((int)(ballx + 0.5), (int)(bally+0.5)); //runder upp bollkoordinater om dom är över  x.5.
+	update_display();
+}
 
 /* Interrupt Service Routine */
 void user_isr( void )
@@ -106,84 +197,6 @@ void user_isr( void )
 		}
 	} */
 	//update_display();
-}
-
-void set_scorecard( void ){ //Updates the scorecard text
-	display_string(0, "Score: ");
-	//num32asc( &textbuffer[0][8], itoaconv(currentscore) );
-	//set_Char (0, 4, itoaconv(currentscore));
-	display_string(1, itoaconv(currentscore));
-	display_string(2, "Total: ");
-	display_string(3, itoaconv(totalscore + currentscore));
-
-}
-
-void advance_game( void){ //advances the game 1 frame. om gamestate = aiming, ritar sikte, flyttar sikte om knapper trycks. om gamestate = charging, ändrar charge variablen + medföljande lampor
-// om gamestate = moving, flyttar bollen, samt går tillbaka till aiming om bollens hastighet är låg.
-// alla gamestates: ritar nästa frame på skärmen.
-	int i,j;
-	//display_myimage(96);
-	//draw_pixel(5,5);
-	//draw_pixel(5,10);
-	//clear_display();
-	volatile int* leds = (volatile int*) 0xbf886110;
-	int btns= getbtns(); 
-	set_map(); //nollställer displayen till mappen
-	switch (current_game_state){
-		case(aiming):
-				if ((btns & 4 ) == 4){
-					aim+= PI/180;
-				}
-				if ((btns & 2 )== 2){
-					aim-= PI/180;
-				}
-				draw_aim(ballx, bally, aim);
-				//draw_aim(ballx, bally, (M_PI / 2));
-				//draw_aim(ballx, bally, (M_PI / 4)); //tests to see lines
-			break;
-		case(charging):
-			timeoutcount--;
-			if (timeoutcount != 0){
-				break;
-			}
-			timeoutcount = 5;
-			if ((btns & 8 ) == 8){ //charge button is being held down, we increase the charge
-				if (charge == 8) chargingup = 0;
-				if (charge == 0) chargingup = 1;
-				if (chargingup == 1){
-					charge+= 1;
-					*leds = *leds | 1 <<(8-charge);
-				} else{
-					charge-= 1;
-					*leds = *leds & (0xFF & (0xFF << (8-charge))); // charge = 6 => & 11111110  charge = 5 => && 11111100 charge = 0 7-charge 0s
-				}
-				
-			} else{
-				ballvelocity = 0.1 + (0.2 * charge); //this should be a variable depending on charge to hit harder/softer
-				charge = 0;
-				balldirection = aim;
-				balldx = cos(aim);
-				balldy = sin(aim);
-				*leds = *leds & 0x00;
-				//next_state = moving;
-				current_game_state = moving;
-				currentscore++;
-			}
-			break;
-		case(moving):
-			moveball();
-			if (ballvelocity < MIN_BALL_SPEED){
-				ballvelocity = 0;
-				current_game_state = aiming;
-			}
-			break;
-			
-		//default:
-			//default stuff if no state
-	}
-	 
-	set_ball((int)(ballx + 0.5), (int)(bally+0.5)); //runder upp bollkoordinater om dom är över  x.5.
-	update_display();
 }
 
 void load_map(void){

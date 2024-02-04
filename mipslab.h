@@ -8,25 +8,25 @@
    For copyright and licensing, see file COPYING */
 
 /* Declare display-related functions from mipslabfunc.c */
-void display_image(int x, const uint8_t *data);
-void display_init(void);
-void display_string(int line, char *s);
-void display_update(void);
-uint8_t spi_send_recv(uint8_t data);
-uint8_t reverse (uint8_t input);
-void set_Char (int line, int position, char *s);
+// void display_image(int x, const uint8_t *data);
+// void display_init(void);
+// void display_string(int line, char *s);
+// void display_update(void);
+// uint8_t spi_send_recv(uint8_t data);
+// uint8_t reverse (uint8_t input);
+// void set_Char (int line, int position, char *s);
 
 // Declare stuff in display.c
-void update_display(void);
-void set_pixel (int x, int y);
-void draw_aim (double ballx, double bally, double aim);
+// void update_display(void);
+// void set_pixel (int x, int y);
+// void draw_aim (double ballx, double bally, double aim);
 
-/* Declare lab-related functions from mipslabfunc.c */
-char * itoaconv( int num );
-void labwork(void);
-int nextprime( int inval );
-void quicksleep(int cyc);
-void tick( unsigned int * timep );
+// /* Declare lab-related functions from mipslabfunc.c */
+// char * itoaconv( int num );
+// void labwork(void);
+// int nextprime( int inval );
+// void quicksleep(int cyc);
+// void tick( unsigned int * timep );
 
 /* Declare display_debug - a function to help debugging.
 

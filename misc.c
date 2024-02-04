@@ -1,5 +1,5 @@
-/* 
 
+#include "misc.h"
 
 
 
@@ -11,4 +11,4 @@ uint8_t reverse (uint8_t input){
 		if (a == 1) output = output | a << (7-i);
 	}
 	return output;
-} */
+}
