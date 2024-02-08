@@ -79,13 +79,37 @@ void set_ball(int x, int y){
 	}
 }
 
+void draw_hole(int x, int y){
+	//if size = 5;
+	// if raduis ==    3
+	int end = 2 + (2 * 3);
+	int i, j; // i = dx, j = dy
+	/* for (i = 0; i < end; i++){
+		for (j = 0; j < end; j++){
+			int ai = absolute(i-3);
+			int aj = absolute(j-3);
+			if (ai + aj == 4 && i-3 != 0 && j-3 != 0) set_pixel(x + i-3, y + j-3);
+			else if(ai + aj == 3 && (i-3 == 0 || j-3 == 0)) set_pixel(x + i-3, y + j-3);
+		}
+	} */
+	for (i = -3; i <= 3; i++){
+		for (j = -3; j <= 3; j++){
+			int ai = absolute(i);
+			int aj = absolute(j);
+			if (ai + aj == 4 && i != 0 && j != 0) set_pixel(x + i, y + j);
+			else if(ai + aj == 3 && (i == 0 || j == 0)) set_pixel(x + i, y + j);
+		}
+	}
+	// draw flag
+}
+
 void draw_walls(struct wall walls[]){
 	int length = sizeof(walls) / sizeof(walls[0]);
 	int i, j;
 	for (i = 0; i < length; i++){
 		double d = ((double)walls[i].direction)*PI/180;
 		double scaling;
-
+	
 		if (walls[i].direction % 90 != 0) scaling = 1.415;
 		else scaling = 1;
 		double dx = cos(d) * scaling;

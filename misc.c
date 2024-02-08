@@ -12,3 +12,8 @@ uint8_t reverse (uint8_t input){
 	}
 	return output;
 }
+
+int absolute(int a){
+	if (a < 0) return -a;
+	else return a;
+}

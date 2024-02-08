@@ -14,7 +14,7 @@ asdf
 #include "golf.h"
 
 
-
+static struct wall walls[2];
 static struct wall WALL1;
 static struct ball ballww;
 int startcount = 50; //some of these, (at least ballsize) can be defines instead, some are leftovers from labs. (textstring at least)
@@ -67,7 +67,9 @@ void set_scorecard( void ){ //Updates the scorecard text
 	//för debugg
 	display_string(2, "intaim: ");
 	display_string(3, itoaconv(intaim));
-	display_string(3, itoaconv((int)WALL1.length));
+	display_string(3, itoaconv((int)walls[0].length));
+	
+	display_string(2, itoaconv(sizeof(walls) / sizeof(walls[0])));
 	
 }
 
@@ -151,8 +153,13 @@ void advance_game( void){ //advances the game 1 frame. om gamestate = aiming, ri
 		//default:
 			//default stuff if no state
 	}
-	//draw_walls(walls);
+	//draw_walls(walls); // doesnt work, arrays sent as arguments become pointers or something?
+	int length = sizeof(walls) / sizeof(walls[0]);
+	for (i = 0; i < length; i++){
+		draw_wall(walls[i]);
+	}
 	draw_wall(WALL1); //ritar vektorn WALL1, för testning då vektorerna bråkat
+	draw_hole(110,16);
 	set_ball((int)(ballx + 0.5), (int)(bally+0.5)); //runder upp bollkoordinater om dom är över  x.5.
 	update_display();
 }
@@ -194,7 +201,9 @@ void user_isr( void )
 				
 			break;
 		case(playing):
-				advance_game();
+				advance_game(); //move ball + redraws everything. takes time however. 
+				
+				// Final game should probably just call display_update here, and in the main function have a variable 1 or 0 showing if next frame has been calculated. If 0, check collisions, move ball, draw frame to array, and here we just push the array to the screen.
 			break;
 		case(scorecard):
 			set_scorecard();
@@ -217,6 +226,7 @@ void user_isr( void )
 
 void load_map_vector (int n){
 	if (n==1){
+		struct wall ws[2];
 		struct wall w;
 		w.x = 15;
 		w.y = 10;
@@ -234,6 +244,22 @@ void load_map_vector (int n){
 		walls[1].direction = 0;
 		walls[1].length = 12; */
 		WALL1 = w;
+		//testing the array
+		w.x = 30;
+		w.y = 10;
+		w.direction = 90;
+		w.length = 10;
+		ws[0] = w;
+		
+		w.x = 30;
+		w.y = 10;
+		w.direction = 0;
+		w.length = 20;
+		ws[1] = w;
+		
+		
+		walls[0] = ws[0];
+		walls[1] = ws[1];
 		
 	}
 

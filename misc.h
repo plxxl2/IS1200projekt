@@ -10,3 +10,4 @@
 
 
 uint8_t reverse (uint8_t input);
+int absolute(int a);

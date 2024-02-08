@@ -27,7 +27,7 @@
 #define DISPLAY_TURN_OFF_VDD (PORTFSET = 0x40)
 #define DISPLAY_TURN_OFF_VBAT (PORTFSET = 0x20)
 
-
+void draw_hole(int x, int y);
 void draw_walls(struct wall walls[]);
 void draw_wall(struct wall n);
 void display_image(int x, const uint8_t *data);
