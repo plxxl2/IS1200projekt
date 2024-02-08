@@ -154,6 +154,7 @@ void advance_game( void){ //advances the game 1 frame. om gamestate = aiming, ri
 			//default stuff if no state
 	}
 	//draw_walls(walls); // doesnt work, arrays sent as arguments become pointers or something?
+	// could make global variable length to indicate number of loaded vectors instead.
 	int length = sizeof(walls) / sizeof(walls[0]);
 	for (i = 0; i < length; i++){
 		draw_wall(walls[i]);
@@ -226,7 +227,7 @@ void user_isr( void )
 
 void load_map_vector (int n){
 	if (n==1){
-		struct wall ws[2];
+		struct wall ws[2]; //hård kodade vektorer för test 
 		struct wall w;
 		w.x = 15;
 		w.y = 10;
@@ -266,7 +267,9 @@ void load_map_vector (int n){
 }
 
 void load_map(void){
-	
+	// loads the bitmap from data, saves it in an array in display.c & a copy for collisions  
+	//OLD CODE, WE USE VECTORS NOW INSTEAD. LEFT FOR NOW BECAUSE VISUALS
+	//we can reuse this to maybe draw some non collision objects bitwise later
 	int i,j,k;
 	int mapsizeX = 128/ 8; // = 16
 	int mapsizeY;
@@ -329,8 +332,9 @@ void labinit( void )
 	
 	
 	//load map 1
-	load_map_vector(1);
-	load_map();
+	load_map_vector(1); // loads vectors for map "1", nothing really defined yet for others, but later the plan is to load_map_vector (n); whenever we change levels.
+	// this shouldnt be here when we actually implement a menu before the game.
+	load_map(); // draws the old map
 	
 	
 	
@@ -347,11 +351,11 @@ void labinit( void )
 
 
 
-int check_outofboundsY(void){
+int check_outofboundsY(void){ //not used, early test function
 	if (bally > 29 & sin(balldirection) > 0 | bally < 2 & sin(balldirection) < 0) return 1;
 }
 
-void ball_bounce(double walldirection){
+void ball_bounce(double walldirection){ // channges the balls direction, input is angle of wall we collide with in radians, should probably be converted to degrees (0-360)
 	double a = balldirection;
 	double b = walldirection + (PI/2); // normal till väggen
 	
@@ -371,6 +375,8 @@ void ball_bounce(double walldirection){
 	double y = ay - (2*nv*by);
 	balldx = x;
 	balldy = y;
+	
+	// bytte till steg för steg pga rounding & overflow errors eller något.
 	//double x = -2*((cos(b) * cos(a) + sin(b) * sin(a)) * cos(b) - cos(a));
 	//double y = -2*((cos(b) * cos(a) + sin(b) * sin(a)) * sin(b) - sin(a));
 	//double x =  - (2 *  ((  (cos(b) * cos(a)) + (sin(b) * sin(a))  )   * cos(b)) - cos(a));
@@ -381,12 +387,12 @@ void ball_bounce(double walldirection){
 	//balldirection += 2*( walldirection-balldirection);
 }
 
-void check_outofboundsCol(void){
+void check_outofboundsCol(void){ // enkel out of bounds koll då vi inte har annan kollision än. Ska ändras till att flytta skärmen senare, men behöver vector kollision först.
 	if (ballx > 125 & balldx > (double)0 | ballx < 1 & balldx < (double)0 )  ball_bounce(PI/2);    //balldx = -balldx;  simplet alternativ
 	if (bally > 29 & balldy > (double)0 | bally < 2 & balldy < (double)0)   ball_bounce(PI);                 //balldy = -balldy;
 }
 
-int edgecollision (void){
+int edgecollision (void){ // används ej
 	int i;
 	//for (i = 0; i < collisionmap.len; i++){
 	//	if ball.
@@ -394,7 +400,7 @@ int edgecollision (void){
 
 }
 
-void check_collision(void){
+void check_collision(void){ //samlings funktion för alla collision checks för att göra kodflödet mer läsbart.
 	check_outofboundsCol();
 	//if (bounce == 1){
 		//ball_bounce();
@@ -409,7 +415,7 @@ void labwork( void )
 	//int potentio = analogRead(A0);
 	//volatile int* leds = (volatile int*) 0xbf886110;
 	//static enum gamestate current_game_state = aiming;
-	enum gamestate next_state;
+	enum gamestate next_state; //behövs kanske inte
 	int btns= getbtns(); 
 	if (current_menu_state == intro) return;
 	if ((btns & 1) == 1) {
