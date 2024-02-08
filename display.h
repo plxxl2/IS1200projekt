@@ -14,7 +14,7 @@
 #include "structs.h"
 //#include "golf.h"
 
-
+#define PI 3.14
 #define DISPLAY_CHANGE_TO_COMMAND_MODE (PORTFCLR = 0x10)
 #define DISPLAY_CHANGE_TO_DATA_MODE (PORTFSET = 0x10)
 
@@ -29,6 +29,7 @@
 
 
 void draw_walls(struct wall walls[]);
+void draw_wall(struct wall n);
 void display_image(int x, const uint8_t *data);
 void display_init(void);
 void display_string(int line, char *s);

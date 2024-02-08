@@ -15,7 +15,7 @@ asdf
 
 
 
-static struct wall walls[2];
+static struct wall WALL1;
 static struct ball ballww;
 int startcount = 50; //some of these, (at least ballsize) can be defines instead, some are leftovers from labs. (textstring at least)
 double ballx = 16;
@@ -67,7 +67,7 @@ void set_scorecard( void ){ //Updates the scorecard text
 	//för debugg
 	display_string(2, "intaim: ");
 	display_string(3, itoaconv(intaim));
-	display_string(3, itoaconv(chargingup));
+	display_string(3, itoaconv((int)WALL1.length));
 	
 }
 
@@ -151,7 +151,8 @@ void advance_game( void){ //advances the game 1 frame. om gamestate = aiming, ri
 		//default:
 			//default stuff if no state
 	}
-	draw_walls(walls);
+	//draw_walls(walls);
+	draw_wall(WALL1); //ritar vektorn WALL1, för testning då vektorerna bråkat
 	set_ball((int)(ballx + 0.5), (int)(bally+0.5)); //runder upp bollkoordinater om dom är över  x.5.
 	update_display();
 }
@@ -159,7 +160,7 @@ void advance_game( void){ //advances the game 1 frame. om gamestate = aiming, ri
 /* Interrupt Service Routine */
 void user_isr( void )
 {
-	IFSCLR(0) = 0x100;
+	IFSCLR(0) = 0x100; // restarts timer
 	/* timeoutcount--;
 	if (timeoutcount != 0){
 		return;
@@ -175,7 +176,7 @@ void user_isr( void )
 	//if (ballx > 127) ballx = 16;
 	switch(current_menu_state){
 		case(intro):
-				timeoutcount--;
+				timeoutcount--;     //This is just a delay loop so we actually show the intro screen for a noticeable amount of time, should probably be implemented differently
 				if (timeoutcount != 0){
 					break;
 				}
@@ -217,12 +218,12 @@ void user_isr( void )
 void load_map_vector (int n){
 	if (n==1){
 		struct wall w;
-		w.x = 1;
-		w.y = 1;
-		w.direction = 0;
-		w.length = 67;
+		w.x = 15;
+		w.y = 10;
+		w.direction = 45;
+		w.length = 15;
 		//walls[0] = w;
-		walls[0].x = 1;
+/* 		walls[0].x = 1;
 		walls[0].y = 1;
 		walls[0].direction = 0;
 		walls[0].length = 67;
@@ -231,7 +232,9 @@ void load_map_vector (int n){
 		walls[1].x = 55;
 		walls[1].y = 8;
 		walls[1].direction = 0;
-		walls[1].length = 12;
+		walls[1].length = 12; */
+		WALL1 = w;
+		
 	}
 
 }

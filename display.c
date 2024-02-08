@@ -42,7 +42,7 @@ void set_pixel (int x, int y){
 	int page = (y - row) / 8;
 
 	
-	screen[page][x] =screen[page][x] |(0x1 << row);
+	screen[page][x] = screen[page][x] | (0b1 << row);
 	return;
 }
 
@@ -76,6 +76,36 @@ void set_ball(int x, int y){
 			// set_pixel(x-1, y-1
 		}
 		
+	}
+}
+
+void draw_walls(struct wall walls[]){
+	int length = sizeof(walls) / sizeof(walls[0]);
+	int i, j;
+	for (i = 0; i < length; i++){
+		double d = ((double)walls[i].direction)*PI/180;
+		double scaling;
+
+		if (walls[i].direction % 90 != 0) scaling = 1.415;
+		else scaling = 1;
+		double dx = cos(d) * scaling;
+		double dy = sin(d) * scaling;
+		for (j = 0; j < walls[i].length; j++){
+			set_pixel( walls[i].x + (dx * j ) , walls[i].y + (dy * j ));
+		}
+	}
+}
+
+void draw_wall(struct wall n){
+	double d = ((double)n.direction)*PI/180;
+	double scaling;
+	if (n.direction % 90 != 0) scaling = 1.415;
+	else scaling = 1;
+	int j;
+	double dx = cos(d) * scaling;
+	double dy = sin(d) * scaling;
+	for (j = 0; j < n.length; j++){
+		set_pixel(n.x + (dx * j)   , n.y + (dy * j));
 	}
 }
 
@@ -312,15 +342,6 @@ void display_string(int line, char *s) {
 	else textbuffer[line][position] = ' '; 
 } */
 
-void draw_walls(struct wall walls[]){
-	int length = sizeof(walls) / sizeof(walls[0]);
-	int i, j;
-	for (i = 0; i < length; i++){
-		for (j = 0; j < walls[i].length; j++){
-			set_pixel( walls[i].x + cos(walls[i].direction)   , walls[i].y + sin(walls[i].direction));
-		}
-	}
-}
 
 
 void display_image(int x, const uint8_t *data) {

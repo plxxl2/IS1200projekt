@@ -14,7 +14,7 @@ struct wall {
 	int x;
 	int y;
 	int direction;
-	float length;
+	int length;
 
 }  wall;
 
