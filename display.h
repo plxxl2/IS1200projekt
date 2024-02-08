@@ -11,6 +11,7 @@
 #include "mipslab.h"  /* Declatations for these labs */
 #include <math.h>
 #include "misc.h"
+#include "structs.h"
 //#include "golf.h"
 
 
@@ -27,14 +28,14 @@
 #define DISPLAY_TURN_OFF_VBAT (PORTFSET = 0x20)
 
 
-
+void draw_walls(struct wall walls[]);
 void display_image(int x, const uint8_t *data);
 void display_init(void);
 void display_string(int line, char *s);
 void display_update(void);
 uint8_t spi_send_recv(uint8_t data);
 uint8_t reverse (uint8_t input);
-void set_Char (int line, int position, char *s);
+//void set_Char (int line, int position, char *s);
 
 // Declare stuff in display.c
 void update_display(void);

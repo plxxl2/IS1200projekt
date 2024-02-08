@@ -11,6 +11,8 @@
 #include "mipslab.h"  /* Declatations for these labs */
 #include <stdio.h>
 #include <math.h>   
+#include "structs.h"	
+#include "io.h"
    
 
 #define BALL_SLOWDOWN 0.993

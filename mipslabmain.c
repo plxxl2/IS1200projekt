@@ -53,7 +53,7 @@ int main(void) {
 	SPI2CONSET = 0x20;
 	/* SPI2CON bit ON = 1; */
 	SPI2CONSET = 0x8000;
-	
+	PORTFSET = 0b11111111;
 	display_init();
 	display_string(0, "Hello ");
 	display_string(1, "Minigolf Game");

@@ -15,7 +15,8 @@ asdf
 
 
 
-
+static struct wall walls[2];
+static struct ball ballww;
 int startcount = 50; //some of these, (at least ballsize) can be defines instead, some are leftovers from labs. (textstring at least)
 double ballx = 16;
 double bally = 25;
@@ -30,13 +31,19 @@ int currentscore;
 uint8_t collisionmap[32][128];
 int x = 1;
 uint8_t charge = 0;
-uint8_t chargingup;
+int chargingup;
 int timeoutcount = 50;
 int introtimer = 3;
 char textstring[] = "text, more text, and even more text!";
 static enum gamestate current_game_state = aiming;
 static enum gamestate previous_game_state;
 static enum menustate current_menu_state = intro;
+
+void init_ball(void){
+	ball.x = 25;
+	ball.y = 16;
+	ball.diameter = 1;
+}
 
 void moveball( void ){
 	//ballx+= ballvelocity * cos(balldirection);
@@ -60,6 +67,8 @@ void set_scorecard( void ){ //Updates the scorecard text
 	//för debugg
 	display_string(2, "intaim: ");
 	display_string(3, itoaconv(intaim));
+	display_string(3, itoaconv(chargingup));
+	
 }
 
 void advance_game( void){ //advances the game 1 frame. om gamestate = aiming, ritar sikte, flyttar sikte om knapper trycks. om gamestate = charging, ändrar charge variablen + medföljande lampor
@@ -69,8 +78,8 @@ void advance_game( void){ //advances the game 1 frame. om gamestate = aiming, ri
 	//display_myimage(96);
 	//draw_pixel(5,5);
 	//draw_pixel(5,10);
+	//volatile int* leds = (volatile int*) 0xbf886110;
 	//clear_display();
-	volatile int* leds = (volatile int*) 0xbf886110;
 	int btns= getbtns(); 
 	set_map(); //nollställer displayen till mappen
 	switch (current_game_state){
@@ -79,7 +88,7 @@ void advance_game( void){ //advances the game 1 frame. om gamestate = aiming, ri
 					//aim+= PI/180;
 					//intaim=intaim+2;
 					intaim++;
-					if (intaim > 359) intaim-=360;
+					if (intaim > 359) intaim+=360;
 				}
 				if ((btns & 2 )== 2){
 					//aim-= PI/180;
@@ -100,18 +109,23 @@ void advance_game( void){ //advances the game 1 frame. om gamestate = aiming, ri
 			}
 			timeoutcount = 5;
 			if ((btns & 8 ) == 8){ //charge button is being held down, we increase the charge
-				if (charge == 8) chargingup = 0;
-				if (charge == 0) chargingup = 1;
-				if (chargingup == 1){
+				if ((charge == 8 && chargingup > 0) || (charge == 0 && chargingup < 0)) chargingup = -chargingup;
+				else{ 
+					charge = charge + chargingup;
+					if (chargingup < 0) reset_led(charge + 1);
+					else set_led(charge);
+				}
+				//if (charge == 0) chargingup = 1;
+/* 				if (chargingup == 1){
 					charge+= 1;
 					*leds = *leds | 1 <<(8-charge);
 				} else{
 					charge-= 1;
 					*leds = *leds & (0xFF & (0xFF << (8-charge))); // charge = 6 => & 11111110  charge = 5 => && 11111100 charge = 0 7-charge 0s
-				}
+				} */
 				
 			} else{
-				ballvelocity = 0.1 + (0.2 * charge); //this should be a variable depending on charge to hit harder/softer
+				ballvelocity = 0.3 + (0.2 * charge); //this should be a variable depending on charge to hit harder/softer
 				charge = 0;
 				balldirection = aim;
 				//balldx = cos(aim);
@@ -119,7 +133,8 @@ void advance_game( void){ //advances the game 1 frame. om gamestate = aiming, ri
 				//intaim
 				balldx = cos(((double)intaim/(180/PI)));
 				balldy = sin(((double)intaim/(180/PI)));
-				*leds = *leds & 0x00;
+				reset_led_all();
+				//*leds = *leds & 0xFFFFFF00;
 				//next_state = moving;
 				current_game_state = moving;
 				currentscore++;
@@ -136,7 +151,7 @@ void advance_game( void){ //advances the game 1 frame. om gamestate = aiming, ri
 		//default:
 			//default stuff if no state
 	}
-	 
+	draw_walls(walls);
 	set_ball((int)(ballx + 0.5), (int)(bally+0.5)); //runder upp bollkoordinater om dom är över  x.5.
 	update_display();
 }
@@ -199,7 +214,30 @@ void user_isr( void )
 	//update_display();
 }
 
+void load_map_vector (int n){
+	if (n==1){
+		struct wall w;
+		w.x = 1;
+		w.y = 1;
+		w.direction = 0;
+		w.length = 67;
+		//walls[0] = w;
+		walls[0].x = 1;
+		walls[0].y = 1;
+		walls[0].direction = 0;
+		walls[0].length = 67;
+		
+		
+		walls[1].x = 55;
+		walls[1].y = 8;
+		walls[1].direction = 0;
+		walls[1].length = 12;
+	}
+
+}
+
 void load_map(void){
+	
 	int i,j,k;
 	int mapsizeX = 128/ 8; // = 16
 	int mapsizeY;
@@ -226,8 +264,9 @@ void load_map(void){
 /* Lab-specific initialization goes here */
 void labinit( void )
 {
-	volatile int* leds = (volatile int*) 0xbf886100;
-	*leds = *leds & 0x00;
+	//volatile int* leds = (volatile int*) 0xbf886100;
+	//*leds = *leds & 0xFFFFFF00;
+	reset_led_all();
 	//volatile int* inputs = (volatile int*) addresss;
 	//*inputs = *inputs & 4064; // 0b111111100000
 	TRISD = TRISD | 4064;
@@ -255,12 +294,13 @@ void labinit( void )
 	T2CONSET  = 0x8000;
 	
 	
-	
+	//set_led_all();
 	
 	
 	
 	
 	//load map 1
+	load_map_vector(1);
 	load_map();
 	
 	
@@ -279,7 +319,7 @@ void labinit( void )
 
 
 int check_outofboundsY(void){
-	if (bally > 30 & sin(balldirection) > 0 | bally < 1 & sin(balldirection) < 0) return 1;
+	if (bally > 29 & sin(balldirection) > 0 | bally < 2 & sin(balldirection) < 0) return 1;
 }
 
 void ball_bounce(double walldirection){
@@ -314,7 +354,7 @@ void ball_bounce(double walldirection){
 
 void check_outofboundsCol(void){
 	if (ballx > 125 & balldx > (double)0 | ballx < 1 & balldx < (double)0 )  ball_bounce(PI/2);    //balldx = -balldx;  simplet alternativ
-	if (bally > 30 & balldy > (double)0 | bally < 1 & balldy < (double)0)   ball_bounce(PI);                 //balldy = -balldy;
+	if (bally > 29 & balldy > (double)0 | bally < 2 & balldy < (double)0)   ball_bounce(PI);                 //balldy = -balldy;
 }
 
 int edgecollision (void){
@@ -338,17 +378,18 @@ void check_collision(void){
 void labwork( void )
 {
 	//int potentio = analogRead(A0);
-	volatile int* leds = (volatile int*) 0xbf886110;
+	//volatile int* leds = (volatile int*) 0xbf886110;
 	//static enum gamestate current_game_state = aiming;
 	enum gamestate next_state;
 	int btns= getbtns(); 
 	if (current_menu_state == intro) return;
 	if ((btns & 1) == 1) {
-		*leds = *leds | 1;
+		//*leds = *leds | 1;
+		set_led(8);
 		current_menu_state = scorecard;
 		//current_game_state = scorecard;
-	} else {
-		*leds = *leds & 0xFE;
+	} else if  (current_menu_state == scorecard) {
+		reset_led(8);
 		current_menu_state = playing;
 		//current_game_state = previous_game_state; // value is not restored
 	}

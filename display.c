@@ -312,6 +312,17 @@ void display_string(int line, char *s) {
 	else textbuffer[line][position] = ' '; 
 } */
 
+void draw_walls(struct wall walls[]){
+	int length = sizeof(walls) / sizeof(walls[0]);
+	int i, j;
+	for (i = 0; i < length; i++){
+		for (j = 0; j < walls[i].length; j++){
+			set_pixel( walls[i].x + cos(walls[i].direction)   , walls[i].y + sin(walls[i].direction));
+		}
+	}
+}
+
+
 void display_image(int x, const uint8_t *data) {
 	int i, j;
 	
