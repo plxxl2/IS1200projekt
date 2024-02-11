@@ -109,20 +109,22 @@ void advance_game( void){ //advances the game 1 frame. om gamestate = aiming, ri
 				if ((btns & 4 ) == 4){
 					//aim+= PI/180;
 					//intaim=intaim+2;
-					intaim++;
-					if (intaim > 359) intaim+=360;
+					intaim--;
+					if (intaim < 0) intaim+=360;
 				}
 				if ((btns & 2 )== 2){
 					//aim-= PI/180;
 					//intaim=intaim-2;
-					intaim--;
-					if (intaim < 0) intaim+=360;
+					intaim++;
+					if (intaim > 359) intaim+=360;
+					
 				}
 				//draw_aim(ballx, bally, aim); //insert intaim -> radianer  *360?
 				draw_aim(ballx, bally, ((double)intaim/(180/PI)));
 				if ((btns & 8 ) == 8){ // 4 -> 8
 					//*leds = *leds | (btns*16); // old test function, led 3 + 4 = 7 lights up
 					charge = 0;
+					reset_led_all();
 					timeoutcount = 5;
 					chargingup = 1;
 					current_game_state = charging;
@@ -594,9 +596,14 @@ void labwork( void )
 				//if (bally > 32 | bally < 0) bally = 16;
 				//if (ballx > 128 | ballx < 0) ballx = 16;
 				// Positon i koden; då addition på mytime kan gå out of bounds av klockans bas 60, och det hanteras av tick(), så vill vi att tick() kallas mellan denna addition & displayupdate
-				if ((btns & 8 ) == 8){ // 4 -> 8
+				
+				
+				
+				//moved to advance_game
+				/* if ((btns & 8 ) == 8){ // 4 -> 8
 					//*leds = *leds | (btns*16); // old test function, led 3 + 4 = 7 lights up
 					charge = 0;
+					reset_led_all();
 					timeoutcount = 5;
 					chargingup = 1;
 					next_state = charging;
@@ -605,7 +612,7 @@ void labwork( void )
 
 				}else{
 
-				}
+				} */
 				
 				break;
 			
