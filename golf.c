@@ -13,10 +13,10 @@ asdf
 
 #include "golf.h"
 
-
-static struct wall walls[2];
+static int wall_array_length = 0;
+static struct wall wall_array[6];
 static struct wall WALL1;
-static struct ball ballww;
+//static struct ball ballww;
 int startcount = 50; //some of these, (at least ballsize) can be defines instead, some are leftovers from labs. (textstring at least)
 double ballx = 16;
 double bally = 16;
@@ -57,43 +57,7 @@ int ball_same_direction(double x, double y){ //takes a vector (x, y) as input, c
 
 }
 
-int collision_wall (struct wall w){
-	double ax = ballx - w.x;
-	double ay = bally - w.y;
-		// vektorn a som ska projekteras på ball
-		// vektorn b är wall.x & wall.y
-	double scaling;
-	if (w.direction % 90 != 0) scaling = 1.415;
-	else scaling = 1;	
-	double bx = (cos(w.direction*PI/180) * scaling * w.length); //"vektor form på väggen, cos(direction) * scaling * length
-	double by = (sin(w.direction*PI/180) * scaling * w.length);
-	double dotproduct = ((ax * bx) + (ay * by))/ ((bx * bx) + (by * by));
-	//double dx = cos(w.direction * PI/180);
-	//double dy = sin(w.direction * PI/180);
-	if ((dotproduct > 0 ) & (dotproduct < 1)){ // 1 > dot product > 0 means that the ball is inside perpendicular lines drawn at both edges of the wall.
-		//betyder att bollen är "inom" vektorn.
-		double perpx = ax - (dotproduct  * bx);
-		double perpy = ay - (dotproduct  * by);
-		//kolla avståndet
-		double distance = sqrt((perpx * perpx) + (perpy * perpy)); //length of the perpendicular vector from the wall to the ball is the distance of the (center) of the ball to the wall.
-		if (distance < 2.5){
-			// scaling the perp vector to unit length for acos and asin functions.
-			double scaledinvertedperpx = -perpx/distance, scaledinvertedperpy = -perpy/distance; // might not actually need to scale this to unit length
-			if (ball_same_direction(scaledinvertedperpx, scaledinvertedperpy) == 1) ball_bounce(w.direction); //if balls vector is poiting same directionn as the INVERSE of the perp vector, the ball is traveling towards the wall
-		/* 	// acos asin funnkar inte pga libraries, alternativ lösning istället
-			double scaledinvertedperpx = -perpx/distance, scaledinvertedperpy = -perpy/distance;
-			double finaldegrees, xdegrees = acos(scaledinvertedperpx), ydegrees = asin(scaledinvertedperpy);
-			if (ydegrees < 0) finaldegrees = (2*PI)-xdegrees;
-			finaldegrees = finaldegrees * 180/PI;
-			int upperbound = finaldegrees + 89, lowerbound = finaldegrees - 89;
-			if (upperbound > 359) upperbound -= 360;
-			if (lowerbound < 0) lowerbound += 360;
-			if ((balldirection >= lowerbound) & (balldirection <= upperbound)) ball_bounce(w.direction);
-			//dags att kolla riktnningen */		
-		}	
-	}
-	return 1;
-}
+
 
 void moveball( void ){
 	//ballx+= ballvelocity * cos(balldirection);
@@ -117,7 +81,7 @@ void set_scorecard( void ){ //Updates the scorecard text
 	//för debugg
 	display_string(2, "intaim: ");
 	display_string(3, itoaconv(intaim));
-	display_string(3, itoaconv((int)walls[0].length));
+	display_string(3, itoaconv((int)wall_array[0].length));
 	
 	//display_string(2, itoaconv(sizeof(walls) / sizeof(walls[0])));
 	display_string(0, itoaconv((int) ballx));
@@ -156,7 +120,15 @@ void advance_game( void){ //advances the game 1 frame. om gamestate = aiming, ri
 				}
 				//draw_aim(ballx, bally, aim); //insert intaim -> radianer  *360?
 				draw_aim(ballx, bally, ((double)intaim/(180/PI)));
-				
+				if ((btns & 8 ) == 8){ // 4 -> 8
+					//*leds = *leds | (btns*16); // old test function, led 3 + 4 = 7 lights up
+					charge = 0;
+					timeoutcount = 5;
+					chargingup = 1;
+					current_game_state = charging;
+					
+
+				}
 				//draw_aim(ballx, bally, (M_PI / 2));
 				//draw_aim(ballx, bally, (M_PI / 4)); //tests to see lines
 			break;
@@ -212,9 +184,9 @@ void advance_game( void){ //advances the game 1 frame. om gamestate = aiming, ri
 	}
 	//draw_walls(walls); // doesnt work, arrays sent as arguments become pointers or something?
 	// could make global variable length to indicate number of loaded vectors instead.
-	int length = sizeof(walls) / sizeof(walls[0]);
-	for (i = 0; i < length; i++){
-		draw_wall(walls[i]);
+	//int length = sizeof(wall_array) / sizeof(wall_array[0]);
+	for (i = 0; i < wall_array_length; i++){
+		draw_wall(wall_array[i]);
 	}
 	draw_wall(WALL1); //ritar vektorn WALL1, för testning då vektorerna bråkat
 	draw_hole(holex, holey);
@@ -326,8 +298,38 @@ void load_map_vector (int n){
 		ws[1] = w;
 		
 		
-		walls[0] = ws[0];
-		walls[1] = ws[1];
+		wall_array[0] = ws[0];
+		wall_array[1] = ws[1];
+		wall_array_length = 2;
+		
+		
+		w.x = 0;
+		w.y = 0;
+		w.direction = 0;
+		w.length = 127;
+		wall_array[2] = w;
+		wall_array_length++;
+		
+		w.x = 0;
+		w.y = 31;
+		w.direction = 0;
+		w.length = 126;
+		wall_array[3] = w;
+		wall_array_length++;
+		
+		w.x = 0;
+		w.y = 0;
+		w.direction = 90;
+		w.length = 31;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+		
+		w.x = 127;
+		w.y = 0;
+		w.direction = 90;
+		w.length = 31;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
 		
 	}
 
@@ -386,6 +388,7 @@ void labinit( void )
 	//110000110101
 	//C   4   5
 	PR2=0x0C45; // 100 fps
+	//PR2=0x1458; //60 fps, game was runninng too fast, it didnt have time to compute calculations.
 	IPCSET(2) = 0x0000000C; //set priority level   har ingen aning om vad detta gör :)
 	IFSCLR(0) = 0x100;
 	IECSET(0) = 0x100;
@@ -487,12 +490,61 @@ void check_hole(void){
 
 }
 
+int collision_wall (struct wall w){
+	double ax = ballx - w.x;
+	double ay = bally - w.y;
+		// vektorn a som ska projekteras på ball
+		// vektorn b är wall.x & wall.y
+	double scaling;
+	if (w.direction % 90 != 0) scaling = 1.415;
+	else scaling = 1;	
+	double bx = (cos(w.direction*DEGREE_TO_RAD) * scaling * w.length); //"vektor form på väggen, cos(direction) * scaling * length
+	double by = (sin(w.direction*DEGREE_TO_RAD) * scaling * w.length);
+	double dotproduct = ((ax * bx) + (ay * by)) / ((bx * bx) + (by * by));
+	//double dx = cos(w.direction * PI/180);
+	//double dy = sin(w.direction * PI/180);
+	if ((dotproduct > 0 ) & (dotproduct < 1)){ // 1 > dot product > 0 means that the ball is inside perpendicular lines drawn at both edges of the wall.
+		//betyder att bollen är "inom" vektorn.
+		double perpx = ax - (dotproduct  * bx);
+		double perpy = ay - (dotproduct  * by);
+		//kolla avståndet
+		double distance = sqrt((perpx * perpx) + (perpy * perpy)); //length of the perpendicular vector from the wall to the ball is the distance of the (center) of the ball to the wall.
+		if (distance < 2.5){
+			// scaling the perp vector to unit length for acos and asin functions.
+			//double scaledinvertedperpx = -perpx/distance, scaledinvertedperpy = -perpy/distance; // might not actually need to scale this to unit length
+			//if (ball_same_direction(scaledinvertedperpx, scaledinvertedperpy) == 1) return 1; //if balls vector is poiting same directionn as the INVERSE of the perp vector, the ball is traveling towards the wall
+			
+			// alternate without scaling to optimze code
+			if (ball_same_direction(-perpx, -perpy) == 1) return 1;
+			
+			
+			
+		/* 	// acos asin funnkar inte pga libraries, alternativ lösning istället
+			double scaledinvertedperpx = -perpx/distance, scaledinvertedperpy = -perpy/distance;
+			double finaldegrees, xdegrees = acos(scaledinvertedperpx), ydegrees = asin(scaledinvertedperpy);
+			if (ydegrees < 0) finaldegrees = (2*PI)-xdegrees;
+			finaldegrees = finaldegrees * 180/PI;
+			int upperbound = finaldegrees + 89, lowerbound = finaldegrees - 89;
+			if (upperbound > 359) upperbound -= 360;
+			if (lowerbound < 0) lowerbound += 360;
+			if ((balldirection >= lowerbound) & (balldirection <= upperbound)) ball_bounce(w.direction);
+			//dags att kolla riktnningen */		
+		}	
+	}
+	return 0;
+}
+
 void check_collision(void){ //samlings funktion för alla collision checks för att göra kodflödet mer läsbart.
 	check_outofboundsCol();
-	collision_wall(WALL1);
-	int i;
-	for (i = 0; i < 2; i++)	collision_wall(walls[i]);
 	if (ballinhole == 0)  check_hole();
+	if (collision_wall(WALL1)) ball_bounce(WALL1.direction);
+	int i;
+	for (i = 0; i < wall_array_length; i++)	{
+		if (collision_wall(wall_array[i])) {
+			ball_bounce(wall_array[i].direction);
+			break; //if we bounce maybe we can break? for performance upgrade, means we can only bounce once per frame though.
+		}
+	}
 	//if (bounce == 1){
 		//ball_bounce();
 	//	return;
@@ -507,7 +559,7 @@ void labwork( void )
 	//volatile int* leds = (volatile int*) 0xbf886110;
 	//static enum gamestate current_game_state = aiming;
 	enum gamestate next_state; //behövs kanske inte
-	int btns= getbtns(); 
+	int btns = getbtns(); 
 	if (current_menu_state == intro) return;
 	if ((btns & 1) == 1) {
 		//*leds = *leds | 1;

@@ -20,7 +20,8 @@
 #define BALL_SLOWDOWN 0.993
 #define PI 3.14
 #define MIN_BALL_SPEED 0.2
-
+#define RAD_TO_DEGREE 180/3.14
+#define DEGREE_TO_RAD  3.14/180
 
 #define AIM_LENGTH 7 //maybe belongs in display?
 #define AIM_GAP  5

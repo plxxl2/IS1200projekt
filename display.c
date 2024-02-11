@@ -40,8 +40,6 @@ void set_pixel (int x, int y){
 	// figure out which page
 	int row = y % 8;
 	int page = (y - row) / 8;
-
-	
 	screen[page][x] = screen[page][x] | (0b1 << row);
 	return;
 }
@@ -80,7 +78,7 @@ void set_ball(int x, int y){
 	for (i = 0; i < balldiameter; i++){ 
 		for(j = 0; j < balldiameter; j++){ // 3x3 repeats
 			//set_pixel(x + (i-1) * edgedistance, y + (j-1) * edgedistance;
-			set_pixel(x + i - 1, y + j - 1);
+			set_pixel(x + i - 1, y + j - 1); // x -1, x, x+1  samt y-1, y, y+1
 			// set_pixel(x-1, y-1
 		}
 		
@@ -246,7 +244,8 @@ void update_display(void){
 		for (j=0; j<128; j++){
 			// we wanna invert here
 			
-			drawsomething = reverse(screen[3-i][j]);
+			//drawsomething = reverse(screen[3-i][j]); //reversing is a big performance cost, maybe we just accept that the map is mirrored, makes designing the map a little harder, and we might need to swap buttons 2 & 3 for steering, otherwise the player wont notice.
+			drawsomething = screen[i][j]; //estimated cost of mirroring is minimum 5000 clock cycles per frame. 
 			//drawsomething = screen[3-i][j];
 			//drawsomething = reverse(drawsomething);
 			spi_send_recv(drawsomething);
