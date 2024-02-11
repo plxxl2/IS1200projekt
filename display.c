@@ -307,6 +307,68 @@ void update_display_ball(int bx, int by){
 	}
 }
 
+void update_display_ball_aim(int bx, int by, double ballaim){
+	int i,j,z;
+	uint8_t drawsomething;
+	
+	int aim[14];  //we populate an array with the x,y values of the aim
+	double dx = cos(ballaim);
+	double dy = sin(ballaim);
+	double distance;
+	for (i=0; i < 7; i++){
+		distance = (double)(5 + i);
+		aim[2*i] = (int)(bx + (dx * distance));
+		aim[1 + (2*i)] = (int)(by + (dy * distance));
+	}	
+	
+	for (i = 0; i < 4; i++){
+		DISPLAY_CHANGE_TO_COMMAND_MODE;
+ 		spi_send_recv(0x22);
+		spi_send_recv(i);
+		
+		
+		spi_send_recv(0x0);
+		spi_send_recv(0x10);
+		DISPLAY_CHANGE_TO_DATA_MODE;
+		
+		for (j=0; j<128; j++){
+			// we wanna invert here
+			
+			// 1, 1
+				
+			
+			//drawsomething = reverse(screen[3-i][j]); //reversing is a big performance cost, maybe we just accept that the map is mirrored, makes designing the map a little harder, and we might need to swap buttons 2 & 3 for steering, otherwise the player wont notice.
+			drawsomething = screen[i][j]; //estimated cost of reversing is minimum 128*40 cpu clock cycles per frame. 
+			//drawsomething = screen[3-i][j];
+			//drawsomething = reverse(drawsomething);
+			
+			//snipe in the ball here maybe instead of redrawing a lot every frame
+			if ((j >= (bx - 1)) && (j <= (bx + 1))){ //if we are in correct X coords for ball
+			// if j >= 0 && <= 2 so j = 0, 1 , 2
+				for (z = -1; z <= 1; z++){ // for -1, 0, 1
+					int row = (by+z) % 8; //get the row // row = 0, 1, 2
+					int page = ((by+z) - row) / 8; // get the page 0, 0, 0
+					if(page == i) drawsomething = drawsomething | (0b1 << row); //if we are in the correct row
+					
+				}
+				
+				//screen[page][x] = screen[page][x] | (0b1 << row);
+			}
+			for (z = 0; z < 7; z++){
+				if (aim[2*z] == j){
+					int row = aim[1 + (2*z)] % 8;
+					int page = (aim[1 + (2*z)] - row) / 8;
+					if (page == i) drawsomething = drawsomething | (0b1 << row);
+				}
+			}
+			
+			spi_send_recv(drawsomething);
+		}
+	}
+}
+
+
+
 /* tick:
    Add 1 to time in memory, at location pointed to by parameter.
    Time is stored as 4 pairs of 2 NBCD-digits.

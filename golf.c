@@ -120,8 +120,9 @@ void advance_game( void){ //advances the game 1 frame. om gamestate = aiming, ri
 					
 				}
 				//draw_aim(ballx, bally, aim); //insert intaim -> radianer  *360?
-				draw_background();//RESETS BACKGROUND TO REMOVE AIM ARTIFACTS, ARTIFACTS SHOULD BE INSERTED INTO FOREGROUND WHEN FIGURED OUT HOW TO DO IT
-				draw_aim(ballx, bally, ((double)intaim/(180/PI)));
+				//draw_background();//RESETS BACKGROUND TO REMOVE AIM ARTIFACTS, ARTIFACTS SHOULD BE INSERTED INTO FOREGROUND WHEN FIGURED OUT HOW TO DO IT
+				//draw_aim(ballx, bally, ((double)intaim/(180/PI)));
+				update_display_ball_aim((int)(ballx + 0.5), (int)(bally + 0.5), ((double)intaim/(180/PI)));
 				if ((btns & 8 ) == 8){ // 4 -> 8
 					//*leds = *leds | (btns*16); // old test function, led 3 + 4 = 7 lights up
 					charge = 0;
@@ -167,12 +168,13 @@ void advance_game( void){ //advances the game 1 frame. om gamestate = aiming, ri
 				balldx = cos(((double)intaim/(180/PI)));
 				balldy = sin(((double)intaim/(180/PI)));
 				reset_led_all();
-				draw_background(); // REDRAW BACKGROUNND TO REMOVE AIM LINE ARTIFACTS, SHOULD NOT BE NEEDED WHEN DRAW_AIM IS MODIFIED TO DRAW IN FOREGROUND
+				//draw_background(); // REDRAW BACKGROUNND TO REMOVE AIM LINE ARTIFACTS, SHOULD NOT BE NEEDED WHEN DRAW_AIM IS MODIFIED TO DRAW IN FOREGROUND
 				//*leds = *leds & 0xFFFFFF00;
 				//next_state = moving;
 				current_game_state = moving;
 				currentscore++;
 			}
+			update_display_ball_aim((int)(ballx + 0.5), (int)(bally + 0.5),((double)intaim/(180/PI)));
 			break;
 		case(moving):
 			check_collision();
@@ -181,6 +183,7 @@ void advance_game( void){ //advances the game 1 frame. om gamestate = aiming, ri
 				ballvelocity = 0;
 				current_game_state = aiming;
 			}
+			update_display_ball((int)(ballx + 0.5), (int)(bally + 0.5));
 			break;
 			
 		//default:
@@ -207,7 +210,7 @@ void advance_game( void){ //advances the game 1 frame. om gamestate = aiming, ri
 	//update_display();
 	
 	//
-	update_display_ball((int)(ballx + 0.5), (int)(bally + 0.5));
+	
 }
 
 //asin acos doesnt work 
