@@ -18,6 +18,7 @@
    
 
 #define BALL_SLOWDOWN 0.993
+#define BALL_BOUNCE_SLOWDOWN 0.87
 #define PI 3.14
 #define MIN_BALL_SPEED 0.2
 #define RAD_TO_DEGREE 180/3.14

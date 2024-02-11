@@ -464,6 +464,7 @@ void ball_bounce(int walldirection){ // channges the balls direction, input is a
 	double y = ay - (2*nv*by);
 	balldx = x;
 	balldy = y;
+	ballvelocity = ballvelocity * BALL_BOUNCE_SLOWDOWN;
 	//double newballdirection = acos(balldx);
 	//if(asin(balldy) < 0) newballdirection = (2*PI)-newballdirection;
 	//balldirection = get_balldirection();
