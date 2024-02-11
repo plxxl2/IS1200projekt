@@ -88,7 +88,7 @@ void set_ball(int x, int y){
 void draw_hole(int x, int y){
 	//if size = 5;
 	// if raduis ==    3
-	int end = 2 + (2 * 3);
+	//int end = 2 + (2 * 3);
 	int i, j; // i = dx, j = dy
 	/* for (i = 0; i < end; i++){
 		for (j = 0; j < end; j++){
@@ -109,7 +109,7 @@ void draw_hole(int x, int y){
 	// draw flag
 }
 
-void draw_walls(struct wall walls[]){
+void draw_walls(struct wall walls[]){ //might not work, based on an older (maybe non-functional) version of draw_wall
 	int length = sizeof(walls) / sizeof(walls[0]);
 	int i, j;
 	for (i = 0; i < length; i++){
@@ -134,12 +134,14 @@ void draw_wall(struct wall n){
 	int j;
 	double dx = cos(d) * scaling;
 	double dy = sin(d) * scaling;
+	int x = n.x;
+	int y = n.y;
 	for (j = 0; j < n.length; j++){
-		set_pixel(n.x + (dx * j)   , n.y + (dy * j));
+		set_pixel(x + (dx * j) , y + (dy * j));
 	}
 }
 
-void draw_aim(double ballx, double bally, double aim){
+void draw_aim(double ballx, double bally, double aim){ //need to be able to draw the aim in the foreground. //could make it a separate array
 	int i;
 	double dx = cos(aim);
 	double dy = sin(aim);
@@ -151,13 +153,6 @@ void draw_aim(double ballx, double bally, double aim){
 		y = (int)(bally + (dy * distance));
 		set_pixel(x, y);
 	}
-/*  	set_pixel ((int)ballx + 5, (int)bally);
-	set_pixel ((int)ballx + 6, (int) bally);
-	set_pixel ((int)ballx + 7, (int)bally);
-	set_pixel ((int)ballx + 8, (int)bally);
-	set_pixel ((int)ballx + 9, (int)bally);
-	set_pixel ((int)ballx + 10, (int)bally);
-	set_pixel ((int)ballx + 11, (int)bally);  */
 }
 
 /* void draw_pixel(int x, int y){
@@ -228,7 +223,7 @@ void draw_aim(double ballx, double bally, double aim){
 
 
 void update_display(void){
-	int i,j;
+	int i,j,z;
 	uint8_t drawsomething;
 	
 	for (i = 0; i < 4; i++){
@@ -244,24 +239,74 @@ void update_display(void){
 		for (j=0; j<128; j++){
 			// we wanna invert here
 			
+			
+				
+			
 			//drawsomething = reverse(screen[3-i][j]); //reversing is a big performance cost, maybe we just accept that the map is mirrored, makes designing the map a little harder, and we might need to swap buttons 2 & 3 for steering, otherwise the player wont notice.
-			drawsomething = screen[i][j]; //estimated cost of mirroring is minimum 5000 clock cycles per frame. 
+			drawsomething = screen[i][j]; //estimated cost of reversing is minimum 128*40 cpu clock cycles per frame. 
 			//drawsomething = screen[3-i][j];
 			//drawsomething = reverse(drawsomething);
+			
+			//snipe in the ball here maybe instead of redrawing a lot every frame
+			/* if (j >= ballx - 1 && j <= ballx + 1){ //if we are in correct X coords for ball
+				for (z = -1; z <= 1; z++){
+					int row = (bally+z) % 8; //get the row
+					int page = ((bally+z) - row) / 8; // get the page
+					if(page == i) drawsomething  (0b1 << row); //if we are in the correct row
+				} 
+				
+				//screen[page][x] = screen[page][x] | (0b1 << row);
+			}*/
+			
 			spi_send_recv(drawsomething);
 		}
 	}
 }
 
-/* uint8_t reverse (uint8_t input){
-	uint8_t output = 0;
-	int i;
-	for (i=0; i < 8; i++){
-		int a = (input >> i ) & 0x01;
-		if (a == 1) output = output | a << (7-i);
+
+void update_display_ball(int bx, int by){
+	int i,j,z;
+	uint8_t drawsomething;
+	
+	for (i = 0; i < 4; i++){
+		DISPLAY_CHANGE_TO_COMMAND_MODE;
+ 		spi_send_recv(0x22);
+		spi_send_recv(i);
+		
+		
+		spi_send_recv(0x0);
+		spi_send_recv(0x10);
+		DISPLAY_CHANGE_TO_DATA_MODE;
+		
+		for (j=0; j<128; j++){
+			// we wanna invert here
+			
+			// 1, 1
+				
+			
+			//drawsomething = reverse(screen[3-i][j]); //reversing is a big performance cost, maybe we just accept that the map is mirrored, makes designing the map a little harder, and we might need to swap buttons 2 & 3 for steering, otherwise the player wont notice.
+			drawsomething = screen[i][j]; //estimated cost of reversing is minimum 128*40 cpu clock cycles per frame. 
+			//drawsomething = screen[3-i][j];
+			//drawsomething = reverse(drawsomething);
+			
+			//snipe in the ball here maybe instead of redrawing a lot every frame
+			if ((j >= (bx - 1)) && (j <= (bx + 1))){ //if we are in correct X coords for ball
+			// if j >= 0 && <= 2 so j = 0, 1 , 2
+				for (z = -1; z <= 1; z++){ // for -1, 0, 1
+					int row = (by+z) % 8; //get the row // row = 0, 1, 2
+					int page = ((by+z) - row) / 8; // get the page 0, 0, 0
+					if(page == i) drawsomething = drawsomething | (0b1 << row); //if we are in the correct row
+					
+				}
+				
+				//screen[page][x] = screen[page][x] | (0b1 << row);
+			}
+			
+			spi_send_recv(drawsomething);
+		}
 	}
-	return output;
-} */
+}
+
 /* tick:
    Add 1 to time in memory, at location pointed to by parameter.
    Time is stored as 4 pairs of 2 NBCD-digits.

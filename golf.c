@@ -103,7 +103,7 @@ void advance_game( void){ //advances the game 1 frame. om gamestate = aiming, ri
 	//clear_display();
 	int btns= getbtns(); 
 	//set_map(); //nollställer displayen till mappen
-	clear_screen();
+	//clear_screen();
 	switch (current_game_state){
 		case(aiming):
 				if ((btns & 4 ) == 4){
@@ -185,14 +185,25 @@ void advance_game( void){ //advances the game 1 frame. om gamestate = aiming, ri
 	//draw_walls(walls); // doesnt work, arrays sent as arguments become pointers or something?
 	// could make global variable length to indicate number of loaded vectors instead.
 	//int length = sizeof(wall_array) / sizeof(wall_array[0]);
-	for (i = 0; i < wall_array_length; i++){
+	
+	
+	//old draw, trying a background for better performance
+	
+	/* for (i = 0; i < wall_array_length; i++){
 		draw_wall(wall_array[i]);
 	}
 	draw_wall(WALL1); //ritar vektorn WALL1, för testning då vektorerna bråkat
-	draw_hole(holex, holey);
-	set_ball((int)(ballx + 0.5), (int)(bally+0.5)); //runder upp bollkoordinater om dom är över  x.5.
+	draw_hole(holex, holey); */
+	
+	
+	
+	
+	//set_ball((int)(ballx + 0.5), (int)(bally+0.5)); //runder upp bollkoordinater om dom är över  x.5.
 	//set_ball((int)ballx, (int)bally);
-	update_display();
+	//update_display();
+	
+	//
+	update_display_ball((int)(ballx + 0.5), (int)(bally + 0.5));
 }
 
 //asin acos doesnt work 
@@ -313,14 +324,14 @@ void load_map_vector (int n){
 		w.x = 0;
 		w.y = 31;
 		w.direction = 0;
-		w.length = 126;
+		w.length = 127;
 		wall_array[3] = w;
 		wall_array_length++;
 		
 		w.x = 0;
 		w.y = 0;
 		w.direction = 90;
-		w.length = 31;
+		w.length = 32;
 		wall_array[wall_array_length] = w;
 		wall_array_length++;
 		
@@ -406,8 +417,14 @@ void labinit( void )
 	// this shouldnt be here when we actually implement a menu before the game.
 	//load_map(); // draws the old map
 	
-	
-	
+	//init the background
+	clear_screen();
+	int i;
+	for (i = 0; i < wall_array_length; i++){
+		draw_wall(wall_array[i]);
+	}
+	draw_wall(WALL1); //ritar vektorn WALL1, för testning då vektorerna bråkat
+	draw_hole(holex, holey);
 	
 	
 	enable_interrupt();

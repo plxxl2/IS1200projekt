@@ -40,6 +40,7 @@ uint8_t reverse (uint8_t input);
 
 // Declare stuff in display.c
 void update_display(void);
+void update_display_ball(int bx, int by);
 void set_pixel (int x, int y);
 void draw_aim (double ballx, double bally, double aim);
 
