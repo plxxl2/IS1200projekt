@@ -120,6 +120,7 @@ void advance_game( void){ //advances the game 1 frame. om gamestate = aiming, ri
 					
 				}
 				//draw_aim(ballx, bally, aim); //insert intaim -> radianer  *360?
+				draw_background();//RESETS BACKGROUND TO REMOVE AIM ARTIFACTS, ARTIFACTS SHOULD BE INSERTED INTO FOREGROUND WHEN FIGURED OUT HOW TO DO IT
 				draw_aim(ballx, bally, ((double)intaim/(180/PI)));
 				if ((btns & 8 ) == 8){ // 4 -> 8
 					//*leds = *leds | (btns*16); // old test function, led 3 + 4 = 7 lights up
@@ -166,6 +167,7 @@ void advance_game( void){ //advances the game 1 frame. om gamestate = aiming, ri
 				balldx = cos(((double)intaim/(180/PI)));
 				balldy = sin(((double)intaim/(180/PI)));
 				reset_led_all();
+				draw_background(); // REDRAW BACKGROUNND TO REMOVE AIM LINE ARTIFACTS, SHOULD NOT BE NEEDED WHEN DRAW_AIM IS MODIFIED TO DRAW IN FOREGROUND
 				//*leds = *leds & 0xFFFFFF00;
 				//next_state = moving;
 				current_game_state = moving;
@@ -420,13 +422,7 @@ void labinit( void )
 	//load_map(); // draws the old map
 	
 	//init the background
-	clear_screen();
-	int i;
-	for (i = 0; i < wall_array_length; i++){
-		draw_wall(wall_array[i]);
-	}
-	draw_wall(WALL1); //ritar vektorn WALL1, för testning då vektorerna bråkat
-	draw_hole(holex, holey);
+	draw_background();
 	
 	
 	enable_interrupt();
@@ -507,8 +503,18 @@ void check_hole(void){
 		// victory celebration temp
 		
 	}
-
 }
+
+void draw_background(void){
+	clear_screen();
+	int i;
+	for (i = 0; i < wall_array_length; i++){
+		draw_wall(wall_array[i]);
+	}
+	draw_wall(WALL1); //ritar vektorn WALL1, för testning då vektorerna bråkat
+	draw_hole(holex, holey);
+}
+
 
 int collision_wall (struct wall w){
 	double ax = ballx - w.x;
@@ -588,6 +594,7 @@ void labwork( void )
 		//current_game_state = scorecard;
 	} else if  (current_menu_state == scorecard) {
 		reset_led(8);
+		draw_background(); //RESETS BACKGROUND, TAKES A SMALL AMOUNT OF TIME, TEMPORARY FIX TO RESET ARTIFACTS FROM AIM.
 		current_menu_state = playing;
 		//current_game_state = previous_game_state; // value is not restored
 	}
