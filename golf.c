@@ -50,7 +50,7 @@ void init_ball(void){
 }
 
 int ball_same_direction(double x, double y){ //takes a vector (x, y) as input, checks if the balls vector (balldx, balldy) is pointing in the same direction (dot product > 0)  returns 1 true, or 0 false.
-	double dotproduct = ((ballx * x) + (bally * y)) / ((x*x)+(y*y));
+	double dotproduct = ((balldx * x) + (balldy * y)) / ((x*x)+(y*y));
 	if (dotproduct >= 0) return 1;
 	else return 0;
 
@@ -70,13 +70,13 @@ int collision_wall (struct wall w){
 	double dotproduct = ((ax * bx) + (ay * by))/ ((bx * bx) + (by * by));
 	//double dx = cos(w.direction * PI/180);
 	//double dy = sin(w.direction * PI/180);
-	if ((dotproduct > 0 ) & (dotproduct < w.length)){ // w.length > dot product > 0 meanns that the ball is inside perpendicular lines drawn at both edges of the wall.
+	if ((dotproduct > 0 ) & (dotproduct < 1)){ // 1 > dot product > 0 means that the ball is inside perpendicular lines drawn at both edges of the wall.
 		//betyder att bollen är "inom" vektorn.
 		double perpx = ax - (dotproduct  * bx);
 		double perpy = ay - (dotproduct  * by);
 		//kolla avståndet
 		double distance = sqrt((perpx * perpx) + (perpy * perpy)); //length of the perpendicular vector from the wall to the ball is the distance of the (center) of the ball to the wall.
-		if (distance < 2){
+		if (distance < 2.5){
 			// scaling the perp vector to unit length for acos and asin functions.
 			double scaledinvertedperpx = -perpx/distance, scaledinvertedperpy = -perpy/distance; // might not actually need to scale this to unit length
 			if (ball_same_direction(scaledinvertedperpx, scaledinvertedperpy) == 1) ball_bounce(w.direction); //if balls vector is poiting same directionn as the INVERSE of the perp vector, the ball is traveling towards the wall
@@ -89,22 +89,10 @@ int collision_wall (struct wall w){
 			if (upperbound > 359) upperbound -= 360;
 			if (lowerbound < 0) lowerbound += 360;
 			if ((balldirection >= lowerbound) & (balldirection <= upperbound)) ball_bounce(w.direction);
-			//dags att kolla riktnningen */
-			
-			
-		}
-		
-		
-		
-		
-	
+			//dags att kolla riktnningen */		
+		}	
 	}
-	
-	//float projscale = v * n * asdf ....
-	
 	return 1;
-	
-	
 }
 
 void moveball( void ){
@@ -226,11 +214,12 @@ void advance_game( void){ //advances the game 1 frame. om gamestate = aiming, ri
 	// could make global variable length to indicate number of loaded vectors instead.
 	int length = sizeof(walls) / sizeof(walls[0]);
 	for (i = 0; i < length; i++){
-		//draw_wall(walls[i]);
+		draw_wall(walls[i]);
 	}
 	draw_wall(WALL1); //ritar vektorn WALL1, för testning då vektorerna bråkat
 	draw_hole(holex, holey);
 	set_ball((int)(ballx + 0.5), (int)(bally+0.5)); //runder upp bollkoordinater om dom är över  x.5.
+	//set_ball((int)ballx, (int)bally);
 	update_display();
 }
 
@@ -310,7 +299,7 @@ void load_map_vector (int n){
 		w.x = 55;
 		w.y = 0;
 		w.direction = 45;
-		w.length = 38;
+		w.length = 22;
 		//walls[0] = w;
 /* 		walls[0].x = 1;
 		walls[0].y = 1;
@@ -502,7 +491,7 @@ void check_collision(void){ //samlings funktion för alla collision checks för 
 	check_outofboundsCol();
 	collision_wall(WALL1);
 	int i;
-	//for (i = 0; i < 2; i++)	collision_wall(walls[i]);
+	for (i = 0; i < 2; i++)	collision_wall(walls[i]);
 	if (ballinhole == 0)  check_hole();
 	//if (bounce == 1){
 		//ball_bounce();
