@@ -321,14 +321,14 @@ void load_map_vector (int n){
 		w.x = 0;
 		w.y = 0;
 		w.direction = 0;
-		w.length = 127;
+		w.length = 128;
 		wall_array[2] = w;
 		wall_array_length++;
 		
 		w.x = 0;
 		w.y = 31;
 		w.direction = 0;
-		w.length = 127;
+		w.length = 128;
 		wall_array[3] = w;
 		wall_array_length++;
 		
@@ -342,7 +342,7 @@ void load_map_vector (int n){
 		w.x = 127;
 		w.y = 0;
 		w.direction = 90;
-		w.length = 31;
+		w.length = 32;
 		wall_array[wall_array_length] = w;
 		wall_array_length++;
 		
