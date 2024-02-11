@@ -13,6 +13,8 @@
 #include <math.h>   
 #include "structs.h"	
 #include "io.h"
+#include "misc.h"
+#include <errno.h>
    
 
 #define BALL_SLOWDOWN 0.993

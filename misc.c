@@ -17,3 +17,8 @@ int absolute(int a){
 	if (a < 0) return -a;
 	else return a;
 }
+
+double absoluted(double a){
+	if (a < 0) return -a;
+	else return a;
+}

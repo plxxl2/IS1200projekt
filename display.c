@@ -20,10 +20,10 @@ void quicksleep(int cyc) {
 	for(i = cyc; i > 0; i--);
 }
 
-static uint8_t map[4][128];
+//static uint8_t map[4][128];
 static uint8_t screen[4][128];
 
-void set_map_pixel (int x, int y){
+/* void set_map_pixel (int x, int y){
 	// figure out which page
 	int row = y % 8;
 	int page = (y - row) / 8;
@@ -32,11 +32,11 @@ void set_map_pixel (int x, int y){
 	map[page][x] =map[page][x] |(0x1 << row);
 	return;
 
-}
+} */
 
 void set_pixel (int x, int y){
 	//check out of bounds
-	if (x > 127 | x < 0 | y > 32 | y < 0) return;
+	if (x > 127 || x < 0 || y > 31 || y < 0) return;
 	// figure out which page
 	int row = y % 8;
 	int page = (y - row) / 8;
@@ -55,7 +55,7 @@ void clear_display (void){
 	}
 }
 
-void set_map(void){
+/* void set_map(void){
 	int i,j;
 	for (i=0;i<4;i++){
 		for (j=0; j<128; j++){
@@ -63,8 +63,16 @@ void set_map(void){
 		}
 		
 	}
+} */
+void clear_screen(void){
+	int i,j;
+	for (i=0; i<4; i++){
+		for (j=0; j<128; j++){
+			screen[i][j] = 0;
+		}
+		
+	}
 }
-
 void set_ball(int x, int y){
 	int balldiameter = 3; //should be uneven atm
 	int i, j;
@@ -135,10 +143,14 @@ void draw_wall(struct wall n){
 
 void draw_aim(double ballx, double bally, double aim){
 	int i;
+	double dx = cos(aim);
+	double dy = sin(aim);
+	double distance;
+	int x, y;
 	for (i=0; i < 7; i++){
-		double distance = (double)(5 + i);
-		int x = (int)(ballx + (distance*cos(aim)));
-		int y = (int)(bally + (distance* sin(aim)));
+		distance = (double)(5 + i);
+		x = (int)(ballx + (dx * distance));
+		y = (int)(bally + (dy * distance));
 		set_pixel(x, y);
 	}
 /*  	set_pixel ((int)ballx + 5, (int)bally);
