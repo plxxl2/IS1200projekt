@@ -354,7 +354,7 @@ void update_display_ball_aim(int bx, int by, double ballaim){
 				
 				//screen[page][x] = screen[page][x] | (0b1 << row);
 			}
-			for (z = 0; z < 7; z++){
+			for (z = 0; z < 7; z++){ //we do some checks and (hopefully) draw the aim correctly
 				if (aim[2*z] == j){
 					int row = aim[1 + (2*z)] % 8;
 					int page = (aim[1 + (2*z)] - row) / 8;

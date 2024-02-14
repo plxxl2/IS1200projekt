@@ -174,7 +174,7 @@ void advance_game( void){ //advances the game 1 frame. om gamestate = aiming, ri
 				current_game_state = moving;
 				currentscore++;
 			}
-			update_display_ball_aim((int)(ballx + 0.5), (int)(bally + 0.5),((double)intaim/(180/PI)));
+			update_display_ball_aim((int)(ballx + 0.5), (int)(bally + 0.5),(((double)intaim)/(180/PI)));
 			break;
 		case(moving):
 			check_collision();
@@ -223,6 +223,29 @@ void advance_game( void){ //advances the game 1 frame. om gamestate = aiming, ri
 } */
 
 /* Interrupt Service Routine */
+
+void redraw_background (void){ // exempel på hur vi skulle redrawa background för ny level t.ex.
+	// step 1: ladda in nya vektorer i WALL_ARRAY
+	int i, antal_väggar; //antal_väggar hämtas från data samling, måste inkludera hur många väggar är i nya leveln
+	//antal_väggar =     //hämta från datan någonstans
+	for (i = 0; i < antal_väggar; i++){ // for loop för att hämta nya vektorerna, peka dom mot hur du nu lagt upp datan.
+	//	wall_array[i].x = 
+	//	wall_array[i].y =
+	//	wall_array[i].direction =
+	//	wall_array[i].length = 
+	}
+	wall_array_length = antal_väggar; //så vi har den variablen
+	clear_screen(); //sätter background arrayen till 0 överallt
+	for (i = 0; i < wall_array_length; i++){
+		draw_wall(wall_array[i];
+	}
+	//endast 1 av nedanstående när vi ska skriva till skärmen, görs under spelets gång, behövs ej här annat än för test.
+	update_display(); //laddar upp arrayen på skärmen
+	update_display_ball(); //laddar upp arrayen på skärmen samt injicerar bollen.
+	update_display_ball_aim(); //laddar upp arrayen på skärmen samt injicerar bollen & aim linjen
+	// för att effektivt rita in flyttbara objekt så vill vi förmodligen injicera dom linkande hur aim linjen fungerar, kopiera den funktionen och lägg till det. Behövs även en funktion som är en kopia av update_display_ball som bara injicerar flyttbara objekten + bollen, utan aim linjen för de frames då bollen rör sig, då ska ingen aim linje synas.
+}
+
 void user_isr( void )
 {
 	IFSCLR(0) = 0x100; // restarts timer
