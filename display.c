@@ -164,10 +164,10 @@ void draw_aim(double ballx, double bally, double aim){ //need to be able to draw
 	spi_send_recv(0x22);
 	spi_send_recv(page);
 	
-	spi_send_recv(x); //tror detta är X koordinaten man börjar skriva på.
+	spi_send_recv(x); //tror detta ar X koordinaten man borjar skriva pa.
 	// 1101111
 	// 0
-	spi_send_recv(0x10); // vet inte vad den här gör sätts till 8
+	spi_send_recv(0x10); // vet inte vad den har gor satts till 8
 	// 00010000 | (00000110 & 1111) == 00010000 | 00000110 = 00010110 = 22?
 	// 111;
 	//  0001000 | ((96 / 16) & 1111)

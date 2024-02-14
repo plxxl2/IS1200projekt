@@ -23,7 +23,7 @@ double bally = 16;
 double balldx, balldy;
 double balldirection;
 int ballinhole = 0;
-double aim = PI/2; // försöka göra om aim till int
+double aim = PI/2; // forsoka gora om aim till int
 int intaim = 90;
 double ballvelocity = 1;
 int ballsize = 3;
@@ -78,7 +78,7 @@ void set_scorecard( void ){ //Updates the scorecard text
 	display_string(2, "Total: ");
 	display_string(3, itoaconv(totalscore + currentscore));
 	
-	//för debugg
+	//for debugg
 	display_string(2, "intaim: ");
 	display_string(3, itoaconv(intaim));
 	display_string(3, itoaconv((int)wall_array[0].length));
@@ -92,9 +92,9 @@ void set_scorecard( void ){ //Updates the scorecard text
 	display_string(0, itoaconv(ballinhole));
 }
 
-void advance_game( void){ //advances the game 1 frame. om gamestate = aiming, ritar sikte, flyttar sikte om knapper trycks. om gamestate = charging, ändrar charge variablen + medföljande lampor
-// om gamestate = moving, flyttar bollen, samt går tillbaka till aiming om bollens hastighet är låg.
-// alla gamestates: ritar nästa frame på skärmen.
+void advance_game( void){ //advances the game 1 frame. om gamestate = aiming, ritar sikte, flyttar sikte om knapper trycks. om gamestate = charging, andrar charge variablen + medfoljande lampor
+// om gamestate = moving, flyttar bollen, samt gar tillbaka till aiming om bollens hastighet ar lag.
+// alla gamestates: ritar nasta frame pa skarmen.
 	int i,j;
 	//display_myimage(96);
 	//draw_pixel(5,5);
@@ -102,7 +102,7 @@ void advance_game( void){ //advances the game 1 frame. om gamestate = aiming, ri
 	//volatile int* leds = (volatile int*) 0xbf886110;
 	//clear_display();
 	int btns= getbtns(); 
-	//set_map(); //nollställer displayen till mappen
+	//set_map(); //nollstaller displayen till mappen
 	//clear_screen();
 	switch (current_game_state){
 		case(aiming):
@@ -199,13 +199,13 @@ void advance_game( void){ //advances the game 1 frame. om gamestate = aiming, ri
 	/* for (i = 0; i < wall_array_length; i++){
 		draw_wall(wall_array[i]);
 	}
-	draw_wall(WALL1); //ritar vektorn WALL1, för testning då vektorerna bråkat
+	draw_wall(WALL1); //ritar vektorn WALL1, for testning da vektorerna brakat
 	draw_hole(holex, holey); */
 	
 	
 	
 	
-	//set_ball((int)(ballx + 0.5), (int)(bally+0.5)); //runder upp bollkoordinater om dom är över  x.5.
+	//set_ball((int)(ballx + 0.5), (int)(bally+0.5)); //runder upp bollkoordinater om dom ar over  x.5.
 	//set_ball((int)ballx, (int)bally);
 	//update_display();
 	
@@ -224,26 +224,26 @@ void advance_game( void){ //advances the game 1 frame. om gamestate = aiming, ri
 
 /* Interrupt Service Routine */
 
-void redraw_background (void){ // exempel på hur vi skulle redrawa background för ny level t.ex.
+void redraw_background (void){ // exempel pa hur vi skulle redrawa background for ny level t.ex.
 	// step 1: ladda in nya vektorer i WALL_ARRAY
-	int i, antal_väggar; //antal_väggar hämtas från data samling, måste inkludera hur många väggar är i nya leveln
-	//antal_väggar =     //hämta från datan någonstans
-	for (i = 0; i < antal_väggar; i++){ // for loop för att hämta nya vektorerna, peka dom mot hur du nu lagt upp datan.
+	int i, antal_vaggar; //antal_vaggar hamtas fran data samling, maste inkludera hur manga vaggar ar i nya leveln
+	//antal_vaggar =     //hamta fran datan nagonstans
+	for (i = 0; i < antal_vaggar; i++){ // for loop for att hamta nya vektorerna, peka dom mot hur du nu lagt upp datan.
 	//	wall_array[i].x = 
 	//	wall_array[i].y =
 	//	wall_array[i].direction =
 	//	wall_array[i].length = 
 	}
-	wall_array_length = antal_väggar; //så vi har den variablen
-	clear_screen(); //sätter background arrayen till 0 överallt
+	wall_array_length = antal_vaggar; //sa vi har den variablen
+	clear_screen(); //satter background arrayen till 0 overallt
 	for (i = 0; i < wall_array_length; i++){
-		draw_wall(wall_array[i];
+		draw_wall(wall_array[i]);
 	}
-	//endast 1 av nedanstående när vi ska skriva till skärmen, görs under spelets gång, behövs ej här annat än för test.
-	update_display(); //laddar upp arrayen på skärmen
-	update_display_ball(); //laddar upp arrayen på skärmen samt injicerar bollen.
-	update_display_ball_aim(); //laddar upp arrayen på skärmen samt injicerar bollen & aim linjen
-	// för att effektivt rita in flyttbara objekt så vill vi förmodligen injicera dom linkande hur aim linjen fungerar, kopiera den funktionen och lägg till det. Behövs även en funktion som är en kopia av update_display_ball som bara injicerar flyttbara objekten + bollen, utan aim linjen för de frames då bollen rör sig, då ska ingen aim linje synas.
+	//endast 1 av nedanstaende nar vi ska skriva till skarmen, gors under spelets gang, behovs ej har annat an for test.
+	update_display(); //laddar upp arrayen pa skarmen
+	update_display_ball(); //laddar upp arrayen pa skarmen samt injicerar bollen.
+	update_display_ball_aim(); //laddar upp arrayen pa skarmen samt injicerar bollen & aim linjen
+	// for att effektivt rita in flyttbara objekt sa vill vi formodligen injicera dom linkande hur aim linjen fungerar, kopiera den funktionen och lagg till det. Behovs aven en funktion som ar en kopia av update_display_ball som bara injicerar flyttbara objekten + bollen, utan aim linjen for de frames da bollen ror sig, da ska ingen aim linje synas.
 }
 
 void user_isr( void )
@@ -307,7 +307,7 @@ void user_isr( void )
 
 void load_map_vector (int n){
 	if (n==1){
-		struct wall ws[2]; //hård kodade vektorer för test 
+		struct wall ws[2]; //hard kodade vektorer for test 
 		struct wall w;
 		w.x = 55;
 		w.y = 0;
@@ -430,7 +430,7 @@ void labinit( void )
 	//C   4   5
 	PR2=0x0C45; // 100 fps
 	//PR2=0x1458; //60 fps, game was runninng too fast, it didnt have time to compute calculations.
-	IPCSET(2) = 0x0000000C; //set priority level   har ingen aning om vad detta gör :)
+	IPCSET(2) = 0x0000000C; //set priority level   har ingen aning om vad detta gor :)
 	IFSCLR(0) = 0x100;
 	IECSET(0) = 0x100;
 	//enable
@@ -468,10 +468,10 @@ int check_outofboundsY(void){ //not used, early test function
 
 void ball_bounce(int walldirection){ // channges the balls direction, input is angle of wall we collide with in radians, should probably be converted to degrees (0-360)
 	double a = balldirection;
-	double b = (walldirection + 90) * PI / 180; // normal till väggen
+	double b = (walldirection + 90) * PI / 180; // normal till vaggen
 	
 	//double ax = cos(a);
-	//double ay = sin(a); // vi skapar 2 vektorer, bollens riktnning a, samt väggens normal b
+	//double ay = sin(a); // vi skapar 2 vektorer, bollens riktnning a, samt vaggens normal b
 	double ax = balldx;
 	double ay = balldy;
 	double bx = cos(b);
@@ -479,7 +479,7 @@ void ball_bounce(int walldirection){ // channges the balls direction, input is a
 
 	double nv = (bx * ax) + (by * ay); //punktprodukt av a ' b
 	
-	//double x = -(2*nv*bx) + ax;  // skapar vektorn (a,y) som är reflektionen till a genom b
+	//double x = -(2*nv*bx) + ax;  // skapar vektorn (a,y) som ar reflektionen till a genom b
 	//double y = -(2*nv*by) + ay;
 	
 	double x = ax - (2*nv*bx);
@@ -491,7 +491,7 @@ void ball_bounce(int walldirection){ // channges the balls direction, input is a
 	//if(asin(balldy) < 0) newballdirection = (2*PI)-newballdirection;
 	//balldirection = get_balldirection();
 	
-	// bytte till steg för steg pga rounding & overflow errors eller något.
+	// bytte till steg for steg pga rounding & overflow errors eller nagot.
 	//double x = -2*((cos(b) * cos(a) + sin(b) * sin(a)) * cos(b) - cos(a));
 	//double y = -2*((cos(b) * cos(a) + sin(b) * sin(a)) * sin(b) - sin(a));
 	//double x =  - (2 *  ((  (cos(b) * cos(a)) + (sin(b) * sin(a))  )   * cos(b)) - cos(a));
@@ -502,12 +502,12 @@ void ball_bounce(int walldirection){ // channges the balls direction, input is a
 	//balldirection += 2*( walldirection-balldirection);
 }
 
-void check_outofboundsCol(void){ // enkel out of bounds koll då vi inte har annan kollision än. Ska ändras till att flytta skärmen senare, men behöver vector kollision först.
+void check_outofboundsCol(void){ // enkel out of bounds koll da vi inte har annan kollision an. Ska andras till att flytta skarmen senare, men behover vector kollision forst.
 	if (ballx > 125 & balldx > (double)0 | ballx < 1 & balldx < (double)0 )  ball_bounce(90);    //balldx = -balldx;  simplet alternativ
 	if (bally > 29 & balldy > (double)0 | bally < 2 & balldy < (double)0)   ball_bounce(0);                 //balldy = -balldy;
 }
 
-int edgecollision (void){ // används ej
+int edgecollision (void){ // anvands ej
 	int i;
 	//for (i = 0; i < collisionmap.len; i++){
 	//	if ball.
@@ -516,7 +516,7 @@ int edgecollision (void){ // används ej
 }
 
 
-void check_hole(void){
+void check_hole(){
 	int dx =  absolute((int)(holex-ballx));
 	int dy =  absolute((int)(holey-bally));
 	if (dx < 2) {
@@ -531,13 +531,13 @@ void check_hole(void){
 	}
 }
 
-void draw_background(void){
+void draw_background(){
 	clear_screen();
 	int i;
 	for (i = 0; i < wall_array_length; i++){
 		draw_wall(wall_array[i]);
 	}
-	draw_wall(WALL1); //ritar vektorn WALL1, för testning då vektorerna bråkat
+	draw_wall(WALL1); //ritar vektorn WALL1, for testning da vektorerna brakat
 	draw_hole(holex, holey);
 }
 
@@ -545,21 +545,21 @@ void draw_background(void){
 int collision_wall (struct wall w){
 	double ax = ballx - w.x;
 	double ay = bally - w.y;
-		// vektorn a som ska projekteras på ball
-		// vektorn b är wall.x & wall.y
+		// vektorn a som ska projekteras pa ball
+		// vektorn b ar wall.x & wall.y
 	double scaling;
 	if (w.direction % 90 != 0) scaling = 1.415;
 	else scaling = 1;	
-	double bx = (cos(w.direction*DEGREE_TO_RAD) * scaling * w.length); //"vektor form på väggen, cos(direction) * scaling * length
+	double bx = (cos(w.direction*DEGREE_TO_RAD) * scaling * w.length); //"vektor form pa vaggen, cos(direction) * scaling * length
 	double by = (sin(w.direction*DEGREE_TO_RAD) * scaling * w.length);
 	double dotproduct = ((ax * bx) + (ay * by)) / ((bx * bx) + (by * by));
 	//double dx = cos(w.direction * PI/180);
 	//double dy = sin(w.direction * PI/180);
 	if ((dotproduct > 0 ) & (dotproduct < 1)){ // 1 > dot product > 0 means that the ball is inside perpendicular lines drawn at both edges of the wall.
-		//betyder att bollen är "inom" vektorn.
+		//betyder att bollen ar "inom" vektorn.
 		double perpx = ax - (dotproduct  * bx);
 		double perpy = ay - (dotproduct  * by);
-		//kolla avståndet
+		//kolla avstandet
 		double distance = sqrt((perpx * perpx) + (perpy * perpy)); //length of the perpendicular vector from the wall to the ball is the distance of the (center) of the ball to the wall.
 		if (distance < 2.5){
 			// scaling the perp vector to unit length for acos and asin functions.
@@ -571,7 +571,7 @@ int collision_wall (struct wall w){
 			
 			
 			
-		/* 	// acos asin funnkar inte pga libraries, alternativ lösning istället
+		/* 	// acos asin funnkar inte pga libraries, alternativ losning istallet
 			double scaledinvertedperpx = -perpx/distance, scaledinvertedperpy = -perpy/distance;
 			double finaldegrees, xdegrees = acos(scaledinvertedperpx), ydegrees = asin(scaledinvertedperpy);
 			if (ydegrees < 0) finaldegrees = (2*PI)-xdegrees;
@@ -586,7 +586,7 @@ int collision_wall (struct wall w){
 	return 0;
 }
 
-void check_collision(void){ //samlings funktion för alla collision checks för att göra kodflödet mer läsbart.
+void check_collision(void){ //samlings funktion for alla collision checks for att gora kodflodet mer lasbart.
 	check_outofboundsCol();
 	if (ballinhole == 0)  check_hole();
 	if (collision_wall(WALL1)) ball_bounce(WALL1.direction);
@@ -610,7 +610,7 @@ void labwork( void )
 	//int potentio = analogRead(A0);
 	//volatile int* leds = (volatile int*) 0xbf886110;
 	//static enum gamestate current_game_state = aiming;
-	enum gamestate next_state; //behövs kanske inte
+	enum gamestate next_state; //behovs kanske inte
 	int btns = getbtns(); 
 	if (current_menu_state == intro) return;
 	if ((btns & 1) == 1) {
@@ -629,7 +629,7 @@ void labwork( void )
 			case(aiming):
 				//if (bally > 32 | bally < 0) bally = 16;
 				//if (ballx > 128 | ballx < 0) ballx = 16;
-				// Positon i koden; då addition på mytime kan gå out of bounds av klockans bas 60, och det hanteras av tick(), så vill vi att tick() kallas mellan denna addition & displayupdate
+				// Positon i koden; da addition pa mytime kan ga out of bounds av klockans bas 60, och det hanteras av tick(), sa vill vi att tick() kallas mellan denna addition & displayupdate
 				
 				
 				
@@ -687,7 +687,7 @@ void labwork( void )
 	//display_update();
 	
 	
-	//*asdf = *asdf + 0x01; //Tidig del övning att binärt räkna ticks på LEDs, avstängd pga felsöknings funktion nedan
+	//*asdf = *asdf + 0x01; //Tidig del ovning att binart rakna ticks pa LEDs, avstangd pga felsoknings funktion nedan
 }
 
 //enum gamestate updatestate(
