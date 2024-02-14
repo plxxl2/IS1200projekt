@@ -15,7 +15,7 @@ struct wall {
 	int y;
 	int direction;
 	int length;
-	//int visible;  kan skriva om en vektor är "visible" och lägga till en if sats för collision att direkt gallra vektorer som ej är visible. Kan kanske ändras när vektorn ritas, ifall ingen punkt ritas så är visible = 0, om någon punnkt ritas så är visible = 1
+	//int visible;  kan skriva om en vektor ar "visible" och lagga till en if sats for collision att direkt gallra vektorer som ej ar visible. Kan kanske andras nar vektorn ritas, ifall ingen punkt ritas sa ar visible = 0, om nagon punnkt ritas sa ar visible = 1
 }  wall;
 
 
