@@ -67,8 +67,6 @@ void moveball( void ){
 	ballvelocity = ballvelocity * BALL_SLOWDOWN;
 }	
 
-
-
 void set_scorecard( void ){ //Updates the scorecard text
 	display_string(0, "Score: ");
 	display_string(1, itoaconv(currentscore));
@@ -101,7 +99,7 @@ void advance_game( void){ //advances the game 1 frame. om gamestate = aiming, ri
 	//draw_pixel(5,10);
 	//volatile int* leds = (volatile int*) 0xbf886110;
 	//clear_display();
-	int btns= getbtns(); 
+	int btns = getbtns(); 
 	//set_map(); //nollstaller displayen till mappen
 	//clear_screen();
 	switch (current_game_state){
@@ -185,6 +183,8 @@ void advance_game( void){ //advances the game 1 frame. om gamestate = aiming, ri
 			}
 			update_display_ball((int)(ballx + 0.5), (int)(bally + 0.5));
 			break;
+		case():
+
 			
 		//default:
 			//default stuff if no state
@@ -212,15 +212,6 @@ void advance_game( void){ //advances the game 1 frame. om gamestate = aiming, ri
 	//
 	
 }
-
-//asin acos doesnt work 
-/* int get_balldirection(void){
-	double newballdirection = acos(balldx);
-	if(asin(balldy) < 0) newballdirection = (2*PI) - newballdirection;
-	//balldirection = 
-
-	return (int)(newballdirection * 180 / PI);
-} */
 
 /* Interrupt Service Routine */
 
@@ -275,7 +266,7 @@ void user_isr( void )
 				if(introtimer != 0){
 					break;
 				}
-				current_menu_state = playing;
+				current_menu_state = menu;
 				
 			break;
 		case(menu):
@@ -307,101 +298,54 @@ void user_isr( void )
 
 void load_map_vector (int n){
 	if (n==1){
-		struct wall ws[2]; //hard kodade vektorer for test 
+	
 		struct wall w;
-		w.x = 55;
-		w.y = 0;
-		w.direction = 45;
-		w.length = 22;
-		//walls[0] = w;
-/* 		walls[0].x = 1;
-		walls[0].y = 1;
-		walls[0].direction = 0;
-		walls[0].length = 67;
 		
-		
-		walls[1].x = 55;
-		walls[1].y = 8;
-		walls[1].direction = 0;
-		walls[1].length = 12; */
-		WALL1 = w;
-		//testing the array
-		w.x = 30;
-		w.y = 10;
+		w.x = 50;
+		w.y = 22;
 		w.direction = 90;
 		w.length = 10;
-		ws[0] = w;
-		
-		w.x = 30;
-		w.y = 10;
-		w.direction = 0;
-		w.length = 20;
-		ws[1] = w;
-		
-		
-		wall_array[0] = ws[0];
-		wall_array[1] = ws[1];
-		wall_array_length = 2;
-		
-		
-		w.x = 0;
-		w.y = 0;
-		w.direction = 0;
-		w.length = 128;
-		wall_array[2] = w;
-		wall_array_length++;
-		
-		w.x = 0;
-		w.y = 31;
-		w.direction = 0;
-		w.length = 128;
-		wall_array[3] = w;
-		wall_array_length++;
-		
-		w.x = 0;
-		w.y = 0;
-		w.direction = 90;
-		w.length = 32;
 		wall_array[wall_array_length] = w;
 		wall_array_length++;
-		
-		w.x = 127;
+
+		w.x = 50;
 		w.y = 0;
 		w.direction = 90;
-		w.length = 32;
+		w.length = 10;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 60;
+		w.y = 16;
+		w.direction = 45;
+		w.length = 5;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 60;
+		w.y = 16;
+		w.direction = -45;
+		w.length = 5;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 70;
+		w.y = 16;
+		w.direction = -135;
+		w.length = 5;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 70;
+		w.y = 16;
+		w.direction = 135;
+		w.length = 5;
 		wall_array[wall_array_length] = w;
 		wall_array_length++;
 		
 	}
 
 }
-
-/* void load_map(void){
-	// loads the bitmap from data, saves it in an array in display.c & a copy for collisions  
-	//OLD CODE, WE USE VECTORS NOW INSTEAD. LEFT FOR NOW BECAUSE VISUALS
-	//we can reuse this to maybe draw some non collision objects bitwise later
-	int i,j,k;
-	int mapsizeX = 128/ 8; // = 16
-	int mapsizeY;
-	for (i = 0; i < 32; i++){
-		for (j = 0; j < 16; j++){
-			int z = map1[i*mapsizeX + j];
-			//collisionmap[i][j] = z; //loads collisions
-			if (z > 0) {
-				for (k=0; k<8; k++){
-					if (((z >> (7-k)) & 1) == 1){
-						//collisionmap[i][j*8+k] = z; //loads collisions
-						set_map_pixel((j*8+k), i);
-					}
-				}
-			
-			}
-			
-		}
-		
-	}
-	//add collision tangents to collisionmap 
-} */
 
 /* Lab-specific initialization goes here */
 void labinit( void )
@@ -457,11 +401,6 @@ void labinit( void )
   return;
 }
 
-
-
-
-
-
 int check_outofboundsY(void){ //not used, early test function
 	if (bally > 29 & sin(balldirection) > 0 | bally < 2 & sin(balldirection) < 0) return 1;
 }
@@ -507,15 +446,6 @@ void check_outofboundsCol(void){ // enkel out of bounds koll da vi inte har anna
 	if (bally > 29 & balldy > (double)0 | bally < 2 & balldy < (double)0)   ball_bounce(0);                 //balldy = -balldy;
 }
 
-int edgecollision (void){ // anvands ej
-	int i;
-	//for (i = 0; i < collisionmap.len; i++){
-	//	if ball.
-	//}
-
-}
-
-
 void check_hole(){
 	int dx =  absolute((int)(holex-ballx));
 	int dy =  absolute((int)(holey-bally));
@@ -537,10 +467,9 @@ void draw_background(){
 	for (i = 0; i < wall_array_length; i++){
 		draw_wall(wall_array[i]);
 	}
-	draw_wall(WALL1); //ritar vektorn WALL1, for testning da vektorerna brakat
+	//draw_wall(WALL1); //ritar vektorn WALL1, for testning da vektorerna brakat
 	draw_hole(holex, holey);
 }
-
 
 int collision_wall (struct wall w){
 	double ax = ballx - w.x;
@@ -612,7 +541,9 @@ void labwork( void )
 	//static enum gamestate current_game_state = aiming;
 	enum gamestate next_state; //behovs kanske inte
 	int btns = getbtns(); 
-	if (current_menu_state == intro) return;
+	if (current_menu_state == intro) {
+		if (btns) current_menu_state = startgame;
+	}
 	if ((btns & 1) == 1) {
 		//*leds = *leds | 1;
 		set_led(8);
