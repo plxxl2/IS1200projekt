@@ -28,7 +28,14 @@
 #define AIM_GAP  5
 
 // Enums -----------------
-enum gamestate {aiming, charging, moving};
+enum gamestate {aiming, charging, moving, finished};
+
+static inline char *stringFromGamestate(enum gamestate n)
+{
+    static const char *strings[] = { "aiming", "charging", "moving", "finished", /* continue for rest of values */ };
+
+    return strings[n];
+}
 
 //should be in game.h when its made
 enum menustate {intro, menu, playing, scorecard}; // can add different menu states example highscore etc, to show where in hte menu you are.

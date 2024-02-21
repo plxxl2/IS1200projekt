@@ -14,8 +14,7 @@ asdf
 #include "golf.h"
 
 static int wall_array_length = 0;
-static struct wall wall_array[6];
-static struct wall WALL1;
+static struct wall wall_array[24];
 //static struct ball ballww;
 int startcount = 50; //some of these, (at least ballsize) can be defines instead, some are leftovers from labs. (textstring at least)
 double ballx = 16;
@@ -42,6 +41,13 @@ char textstring[] = "text, more text, and even more text!";
 static enum gamestate current_game_state = aiming;
 static enum gamestate previous_game_state;
 static enum menustate current_menu_state = intro;
+int loadedmap = 0;
+int currentmap = 1;
+
+int current_shots = 0;
+int tick = 0;
+int tickiterator = 1;
+int tickperiod = 15;
 
 void init_ball(void){
 	ball.x = 25;
@@ -68,61 +74,60 @@ void moveball( void ){
 }	
 
 void set_scorecard( void ){ //Updates the scorecard text
-	display_string(0, "Score: ");
-	display_string(1, itoaconv(currentscore));
+	display_string(0, itoaconv(tick));
+	display_string(1, itoaconv(tickiterator));
+	display_string(2, itoaconv(loadedmap));
+	display_string(3, itoaconv(tickperiod));
 	//num32asc( &textbuffer[0][8], itoaconv(currentscore) );
 	//set_Char (0, 4, itoaconv(currentscore));
 	
-	display_string(2, "Total: ");
-	display_string(3, itoaconv(totalscore + currentscore));
+	// display_string(2, "Total: ");
+	// display_string(3, itoaconv(totalscore + currentscore));
 	
 	//for debugg
-	display_string(2, "intaim: ");
-	display_string(3, itoaconv(intaim));
-	display_string(3, itoaconv((int)wall_array[0].length));
+	// display_string(2, "intaim: ");
+	// display_string(3, itoaconv(intaim));
+	// display_string(3, itoaconv((int)wall_array[0].length));
 	
 	//display_string(2, itoaconv(sizeof(walls) / sizeof(walls[0])));
-	display_string(0, itoaconv((int) ballx));
-	display_string(1, itoaconv((int) bally));
+	// display_string(0, itoaconv((int) ballx));
+	// display_string(1, itoaconv((int) bally));
 	
-	display_string(2, itoaconv((int) absoluted(holex-ballx)));
-	display_string(3, itoaconv((int) absoluted(holey-bally)));
-	display_string(0, itoaconv(ballinhole));
+	// display_string(2, itoaconv((int) absoluted(holex-ballx)));
+	// display_string(3, itoaconv((int) absoluted(holey-bally)));
+	//display_string(3, itoaconv(ballinhole));
 }
 
 void advance_game( void){ //advances the game 1 frame. om gamestate = aiming, ritar sikte, flyttar sikte om knapper trycks. om gamestate = charging, andrar charge variablen + medfoljande lampor
 // om gamestate = moving, flyttar bollen, samt gar tillbaka till aiming om bollens hastighet ar lag.
 // alla gamestates: ritar nasta frame pa skarmen.
 	int i,j;
-	//display_myimage(96);
-	//draw_pixel(5,5);
-	//draw_pixel(5,10);
-	//volatile int* leds = (volatile int*) 0xbf886110;
-	//clear_display();
+
 	int btns = getbtns(); 
-	//set_map(); //nollstaller displayen till mappen
-	//clear_screen();
+
+	if (loadedmap && !tickperiod) {
+		tickperiod = 15;
+		clear_screen();
+		load_map_vector(currentmap);
+	} else if (loadedmap && tickperiod){
+		tickperiod--;
+	}
 	switch (current_game_state){
 		case(aiming):
 				if ((btns & 4 ) == 4){
-					//aim+= PI/180;
-					//intaim=intaim+2;
 					intaim--;
 					if (intaim < 0) intaim+=360;
 				}
 				if ((btns & 2 )== 2){
-					//aim-= PI/180;
-					//intaim=intaim-2;
+
 					intaim++;
 					if (intaim > 359) intaim+=360;
 					
 				}
-				//draw_aim(ballx, bally, aim); //insert intaim -> radianer  *360?
-				//draw_background();//RESETS BACKGROUND TO REMOVE AIM ARTIFACTS, ARTIFACTS SHOULD BE INSERTED INTO FOREGROUND WHEN FIGURED OUT HOW TO DO IT
-				//draw_aim(ballx, bally, ((double)intaim/(180/PI)));
+
 				update_display_ball_aim((int)(ballx + 0.5), (int)(bally + 0.5), ((double)intaim/(180/PI)));
 				if ((btns & 8 ) == 8){ // 4 -> 8
-					//*leds = *leds | (btns*16); // old test function, led 3 + 4 = 7 lights up
+
 					charge = 0;
 					reset_led_all();
 					timeoutcount = 5;
@@ -131,8 +136,7 @@ void advance_game( void){ //advances the game 1 frame. om gamestate = aiming, ri
 					
 
 				}
-				//draw_aim(ballx, bally, (M_PI / 2));
-				//draw_aim(ballx, bally, (M_PI / 4)); //tests to see lines
+
 			break;
 		case(charging):
 			timeoutcount--;
@@ -147,32 +151,21 @@ void advance_game( void){ //advances the game 1 frame. om gamestate = aiming, ri
 					if (chargingup < 0) reset_led(charge + 1);
 					else set_led(charge);
 				}
-				//if (charge == 0) chargingup = 1;
-/* 				if (chargingup == 1){
-					charge+= 1;
-					*leds = *leds | 1 <<(8-charge);
-				} else{
-					charge-= 1;
-					*leds = *leds & (0xFF & (0xFF << (8-charge))); // charge = 6 => & 11111110  charge = 5 => && 11111100 charge = 0 7-charge 0s
-				} */
 				
 			} else{
 				ballvelocity = 0.3 + (0.2 * charge); //this should be a variable depending on charge to hit harder/softer
 				charge = 0;
 				balldirection = aim;
-				//balldx = cos(aim);
-				//balldy = sin(aim);
-				//intaim
+
 				balldx = cos(((double)intaim/(180/PI)));
 				balldy = sin(((double)intaim/(180/PI)));
 				reset_led_all();
-				//draw_background(); // REDRAW BACKGROUNND TO REMOVE AIM LINE ARTIFACTS, SHOULD NOT BE NEEDED WHEN DRAW_AIM IS MODIFIED TO DRAW IN FOREGROUND
-				//*leds = *leds & 0xFFFFFF00;
-				//next_state = moving;
+
 				current_game_state = moving;
 				currentscore++;
 			}
 			update_display_ball_aim((int)(ballx + 0.5), (int)(bally + 0.5),(((double)intaim)/(180/PI)));
+			current_shots++;
 			break;
 		case(moving):
 			check_collision();
@@ -181,35 +174,47 @@ void advance_game( void){ //advances the game 1 frame. om gamestate = aiming, ri
 				ballvelocity = 0;
 				current_game_state = aiming;
 			}
+			if (ballinhole) current_game_state = finished;
 			update_display_ball((int)(ballx + 0.5), (int)(bally + 0.5));
 			break;
-		case():
+		case(finished):
+			// Improvements: run this only once
+			if (ballinhole) {
+			// Rest game state variables
+			ballinhole = 0;
+			ballx = 16;
+			bally = 16;
+			tick = 0;
+			tickiterator = 1;
+			tickperiod = 15;
 
+			currentscore += current_shots;
 			
-		//default:
-			//default stuff if no state
+			clear_screen();
+			display_string(0, "Nice job! Hole 1 competed");
+			display_string(1, "Score: 1");
+			display_string(2, "Total score: 1");
+			display_string(3, "Push any button for next level!");
+			display_update();
+
+			current_shots = 0;
+			currentmap++;
+			loadedmap = 0;
+			
+			}
+
+
+			if (btns) {
+				clear_screen();
+				load_map_vector(currentmap);
+				current_game_state = aiming;
+				loadedmap = 1;
+			}
+
+
+			break;
+		
 	}
-	//draw_walls(walls); // doesnt work, arrays sent as arguments become pointers or something?
-	// could make global variable length to indicate number of loaded vectors instead.
-	//int length = sizeof(wall_array) / sizeof(wall_array[0]);
-	
-	
-	//old draw, trying a background for better performance
-	
-	/* for (i = 0; i < wall_array_length; i++){
-		draw_wall(wall_array[i]);
-	}
-	draw_wall(WALL1); //ritar vektorn WALL1, for testning da vektorerna brakat
-	draw_hole(holex, holey); */
-	
-	
-	
-	
-	//set_ball((int)(ballx + 0.5), (int)(bally+0.5)); //runder upp bollkoordinater om dom ar over  x.5.
-	//set_ball((int)ballx, (int)bally);
-	//update_display();
-	
-	//
 	
 }
 
@@ -266,7 +271,6 @@ void user_isr( void )
 				if(introtimer != 0){
 					break;
 				}
-				current_menu_state = menu;
 				
 			break;
 		case(menu):
@@ -284,22 +288,15 @@ void user_isr( void )
 		//default:	
 	
 	}
-	
-	
-/* 	for (i = 0; i < 32; i++){
-		for (j = 0; j < 1; j++){
-			//if (((j+x) % 2) == 0){
-				//set_pixel (j,i);
-			//}
-		}
-	} */
-	//update_display();
+
 }
 
 void load_map_vector (int n){
-	if (n==1){
-	
-		struct wall w;
+	struct wall w;
+	wall_array_length = 0;
+	switch (n)
+	{
+	case 1:
 		
 		w.x = 50;
 		w.y = 22;
@@ -342,8 +339,66 @@ void load_map_vector (int n){
 		w.length = 5;
 		wall_array[wall_array_length] = w;
 		wall_array_length++;
+		break;
+	
+	case 2:
+		if (tick >= 12) {
+			tickiterator = -1;
+		}
+		if (tick <= 0) {
+			tickiterator = 1;
+		}
+
+		tick += tickiterator;
 		
+		w.x = 35;
+		w.y = 0;
+		w.direction = 90;
+		w.length = tick;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 35;
+		w.y = 32;
+		w.direction = 270;
+		w.length = 12 - tick;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 30;
+		w.y = 16;
+		w.direction = 45;
+		w.length = 5;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 30;
+		w.y = 16;
+		w.direction = -45;
+		w.length = 5;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 40;
+		w.y = 16;
+		w.direction = -135;
+		w.length = 5;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 40;
+		w.y = 16;
+		w.direction = 135;
+		w.length = 5;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+		break;
+
 	}
+
+	//init the background
+	draw_background();
+
 
 }
 
@@ -380,19 +435,10 @@ void labinit( void )
 	//enable
 	T2CONSET  = 0x8000;
 	
-	
 	//set_led_all();
 	
-	
-	
-	
-	//load map 1
-	load_map_vector(1); // loads vectors for map "1", nothing really defined yet for others, but later the plan is to load_map_vector (n); whenever we change levels.
 	// this shouldnt be here when we actually implement a menu before the game.
 	//load_map(); // draws the old map
-	
-	//init the background
-	draw_background();
 	
 	
 	enable_interrupt();
@@ -467,7 +513,6 @@ void draw_background(){
 	for (i = 0; i < wall_array_length; i++){
 		draw_wall(wall_array[i]);
 	}
-	//draw_wall(WALL1); //ritar vektorn WALL1, for testning da vektorerna brakat
 	draw_hole(holex, holey);
 }
 
@@ -518,7 +563,6 @@ int collision_wall (struct wall w){
 void check_collision(void){ //samlings funktion for alla collision checks for att gora kodflodet mer lasbart.
 	check_outofboundsCol();
 	if (ballinhole == 0)  check_hole();
-	if (collision_wall(WALL1)) ball_bounce(WALL1.direction);
 	int i;
 	for (i = 0; i < wall_array_length; i++)	{
 		if (collision_wall(wall_array[i])) {
@@ -542,7 +586,15 @@ void labwork( void )
 	enum gamestate next_state; //behovs kanske inte
 	int btns = getbtns(); 
 	if (current_menu_state == intro) {
-		if (btns) current_menu_state = startgame;
+		if (btns) {
+			current_menu_state = playing;
+			if (!loadedmap) {
+					//load map 1
+					loadedmap = 1;
+					load_map_vector(currentmap); // loads vectors for map "1", nothing really defined yet for others, but later the plan is to load_map_vector (n); whenever we change levels.
+				}
+		}
+
 	}
 	if ((btns & 1) == 1) {
 		//*leds = *leds | 1;
