@@ -26,8 +26,6 @@ double aim = PI/2; // forsoka gora om aim till int
 int intaim = 90;
 double ballvelocity = 1;
 int ballsize = 3;
-int totalscore;
-int currentscore;
 int errno;
 //uint8_t collisionmap[32][128];
 int x = 1;
@@ -37,12 +35,14 @@ int holex = 110;
 int holey = 16;
 int timeoutcount = 50;
 int introtimer = 3;
-char textstring[] = "text, more text, and even more text!";
+
 static enum gamestate current_game_state = aiming;
 static enum gamestate previous_game_state;
 static enum menustate current_menu_state = intro;
 int loadedmap = 0;
 int currentmap = 1;
+int parValues[5] = {2, 2, 2, 2, 2};
+int score[5];
 
 int current_shots = 0;
 int tick = 0;
@@ -162,7 +162,7 @@ void advance_game( void){ //advances the game 1 frame. om gamestate = aiming, ri
 				reset_led_all();
 
 				current_game_state = moving;
-				currentscore++;
+				score[currentmap - 1] += 1;
 			}
 			update_display_ball_aim((int)(ballx + 0.5), (int)(bally + 0.5),(((double)intaim)/(180/PI)));
 			current_shots++;
@@ -187,24 +187,66 @@ void advance_game( void){ //advances the game 1 frame. om gamestate = aiming, ri
 			tick = 0;
 			tickiterator = 1;
 			tickperiod = 15;
-
-			currentscore += current_shots;
 			
 			clear_screen();
-			display_string(0, "Nice job! Hole 1 competed");
-			display_string(1, "Score: 1");
+
+		char result[50]; // Make sure this is large enough to hold the longest string
+
+		int diff = score[currentmap - 1] - parValues[currentmap];
+
+		if (diff > 3) {
+			strcpy(result, "You're way over par!");
+		} else if (diff < -2) {
+			strcpy(result, "You suck!");
+		} else if (score[currentmap - 1] == 1) {
+			strcpy(result, "Hole in one! Wow");
+		} else {
+			switch (diff) {
+				case -2:
+					strcpy(result, "Epic eagle!");
+					break;
+				case -1:
+					strcpy(result, "Nice birdie!");
+					break;
+				case 0:
+					strcpy(result, "Par! Nice job.");
+					break;
+				case 1:
+					strcpy(result, "That's a bogey!");
+					break;
+				case 2:
+					strcpy(result, "Double bogey..");
+					break;
+				default:
+					break;
+			}
+		}
+
+			char score1[255]; // Assuming a maximum string length of 20 characters
+			strcpy(score1, itoaconv(score[0]));
+			strcat(score1, " ");
+			strcat(score1, itoaconv(score[1]));
+			strcat(score1, " ");
+			strcat(score1, itoaconv(score[2]));
+			strcat(score1, " ");
+			strcat(score1, itoaconv(score[3]));
+			strcat(score1, " ");
+			strcat(score1, itoaconv(score[4]));
+			strcat(score1, " ");
+
+			display_string(0, result);
+			display_string(1, score1);
 			display_string(2, "Total score: 1");
 			display_string(3, "Push any button for next level!");
 			display_update();
 
-			current_shots = 0;
-			currentmap++;
 			loadedmap = 0;
 			
 			}
 
 
-			if (btns) {
+			if (btns && !loadedmap) {
+				currentmap++;
 				clear_screen();
 				load_map_vector(currentmap);
 				current_game_state = aiming;
@@ -351,42 +393,42 @@ void load_map_vector (int n){
 
 		tick += tickiterator;
 		
-		w.x = 35;
+		w.x = 65;
 		w.y = 0;
 		w.direction = 90;
 		w.length = tick;
 		wall_array[wall_array_length] = w;
 		wall_array_length++;
 
-		w.x = 35;
+		w.x = 65;
 		w.y = 32;
 		w.direction = 270;
 		w.length = 12 - tick;
 		wall_array[wall_array_length] = w;
 		wall_array_length++;
 
-		w.x = 30;
+		w.x = 60;
 		w.y = 16;
 		w.direction = 45;
 		w.length = 5;
 		wall_array[wall_array_length] = w;
 		wall_array_length++;
 
-		w.x = 30;
+		w.x = 60;
 		w.y = 16;
 		w.direction = -45;
 		w.length = 5;
 		wall_array[wall_array_length] = w;
 		wall_array_length++;
 
-		w.x = 40;
+		w.x = 70;
 		w.y = 16;
 		w.direction = -135;
 		w.length = 5;
 		wall_array[wall_array_length] = w;
 		wall_array_length++;
 
-		w.x = 40;
+		w.x = 70;
 		w.y = 16;
 		w.direction = 135;
 		w.length = 5;
