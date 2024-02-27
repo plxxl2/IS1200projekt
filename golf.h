@@ -38,4 +38,4 @@ static inline char *stringFromGamestate(enum gamestate n)
 }
 
 //should be in game.h when its made
-enum menustate {intro, menu, playing, scorecard}; // can add different menu states example highscore etc, to show where in hte menu you are.
+enum menustate {intro, menu, playing, scorecard, instructions};// can add different menu states example highscore etc, to show where in hte menu you are.

@@ -34,7 +34,8 @@ int chargingup;
 int holex = 110;
 int holey = 16;
 int timeoutcount = 50;
-int introtimer = 3;
+int introtimer = 0;
+int waitforinputchange = 0;
 
 static enum gamestate current_game_state = aiming;
 static enum gamestate previous_game_state;
@@ -48,6 +49,8 @@ int current_shots = 0;
 int tick = 0;
 int tickiterator = 1;
 int tickperiod = 15;
+
+int introloaded = 0;
 
 void init_ball(void){
 	ball.x = 25;
@@ -257,12 +260,24 @@ void advance_game( void){ //advances the game 1 frame. om gamestate = aiming, ri
 			}
 
 
-			if (btns && !loadedmap) {
+			if (btns && !loadedmap && currentmap < 5) {
 				currentmap++;
 				clear_screen();
 				load_map_vector(currentmap);
 				current_game_state = aiming;
 				loadedmap = 1;
+			} else if (btns && currentmap == 5) {
+				currentmap = 1;
+				loadedmap = 0;
+				introloaded = 0;
+				score[0] = 0;
+				score[1] = 0;
+				score[2] = 0;
+				score[3] = 0;
+				score[4] = 0;
+				current_menu_state = intro;
+				current_game_state = aiming;
+				waitforinputchange = 1;
 			}
 
 
@@ -314,19 +329,30 @@ void user_isr( void )
 	//if (ballx > 127) ballx = 16;
 	switch(current_menu_state){
 		case(intro):
-				timeoutcount--;     //This is just a delay loop so we actually show the intro screen for a noticeable amount of time, should probably be implemented differently
-				if (timeoutcount != 0){
-					break;
-				}
-				introtimer--;
-				timeoutcount = 50;
-				display_string(3, itoaconv(introtimer));
-				display_update();
-				if(introtimer != 0){
-					break;
-				}
 				
+			if (!introloaded) {
+				introloaded = 1;
+				display_update();
+				display_image(introtimer, golfBall);
+				display_image(0, intro1);
+				display_image(32, intro2);
+				display_image(64, intro3ball);
+				display_image(96, intro4);
+			}
 			break;
+		case(instructions):
+				
+			if (!introloaded) {
+				introloaded = 1;
+				display_update();
+				display_image(introtimer, golfBall);
+				display_image(0, inst1);
+				display_image(32, inst2);
+				display_image(64, inst3);
+				display_image(96, inst4);
+			}
+			break;
+			
 		case(menu):
 				
 			break;
@@ -1269,6 +1295,17 @@ void labwork( void )
 	int btns = getbtns(); 
 	if (current_menu_state == intro) {
 		if (btns) {
+			if (waitforinputchange) return;
+			current_menu_state = instructions;
+			if (!loadedmap) {
+				introloaded = 0;
+				}
+		}
+		if (!btns) waitforinputchange = 0;
+
+	}
+	if (current_menu_state == instructions) {
+		if ((btns & 1) == 1) {
 			current_menu_state = playing;
 			if (!loadedmap) {
 					//load map 1
@@ -1278,17 +1315,17 @@ void labwork( void )
 		}
 
 	}
-	if ((btns & 1) == 1) {
-		//*leds = *leds | 1;
-		set_led(8);
-		current_menu_state = scorecard;
-		//current_game_state = scorecard;
-	} else if  (current_menu_state == scorecard) {
-		reset_led(8);
-		draw_background(); //RESETS BACKGROUND, TAKES A SMALL AMOUNT OF TIME, TEMPORARY FIX TO RESET ARTIFACTS FROM AIM.
-		current_menu_state = playing;
-		//current_game_state = previous_game_state; // value is not restored
-	}
+	// if ((btns & 1) == 1) {
+	// 	//*leds = *leds | 1;
+	// 	set_led(8);
+	// 	current_menu_state = scorecard;
+	// 	//current_game_state = scorecard;
+	// } else if  (current_menu_state == scorecard) {
+	// 	reset_led(8);
+	// 	draw_background(); //RESETS BACKGROUND, TAKES A SMALL AMOUNT OF TIME, TEMPORARY FIX TO RESET ARTIFACTS FROM AIM.
+	// 	current_menu_state = playing;
+	// 	//current_game_state = previous_game_state; // value is not restored
+	// }
 	
 	switch(current_game_state){
 			case(aiming):
