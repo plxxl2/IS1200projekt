@@ -14,7 +14,7 @@ asdf
 #include "golf.h"
 
 static int wall_array_length = 0;
-static struct wall wall_array[24];
+static struct wall wall_array[36];
 //static struct ball ballww;
 int startcount = 50; //some of these, (at least ballsize) can be defines instead, some are leftovers from labs. (textstring at least)
 double ballx = 16;
@@ -41,7 +41,7 @@ static enum gamestate previous_game_state;
 static enum menustate current_menu_state = intro;
 int loadedmap = 0;
 int currentmap = 1;
-int parValues[5] = {2, 2, 2, 2, 2};
+int parValues[5] = {2, 2, 4, 3, 3};
 int score[5];
 
 int current_shots = 0;
@@ -192,12 +192,10 @@ void advance_game( void){ //advances the game 1 frame. om gamestate = aiming, ri
 
 		char result[50]; // Make sure this is large enough to hold the longest string
 
-		int diff = score[currentmap - 1] - parValues[currentmap];
+		int diff = score[currentmap - 1] - parValues[currentmap - 1];
 
-		if (diff > 3) {
-			strcpy(result, "You're way over par!");
-		} else if (diff < -2) {
-			strcpy(result, "You suck!");
+		if (diff >= 3) {
+			strcpy(result, "Too bad..!");
 		} else if (score[currentmap - 1] == 1) {
 			strcpy(result, "Hole in one! Wow");
 		} else {
@@ -223,7 +221,8 @@ void advance_game( void){ //advances the game 1 frame. om gamestate = aiming, ri
 		}
 
 			char score1[255]; // Assuming a maximum string length of 20 characters
-			strcpy(score1, itoaconv(score[0]));
+			strcpy(score1, "P 1: ");
+			strcat(score1, itoaconv(score[0]));
 			strcat(score1, " ");
 			strcat(score1, itoaconv(score[1]));
 			strcat(score1, " ");
@@ -234,9 +233,22 @@ void advance_game( void){ //advances the game 1 frame. om gamestate = aiming, ri
 			strcat(score1, itoaconv(score[4]));
 			strcat(score1, " ");
 
+			char parValuesString[255];
+			strcpy(parValuesString, "Par: ");
+			strcat(parValuesString, itoaconv(parValues[0]));
+			strcat(parValuesString, " ");
+			strcat(parValuesString, itoaconv(parValues[1]));
+			strcat(parValuesString, " ");
+			strcat(parValuesString, itoaconv(parValues[2]));
+			strcat(parValuesString, " ");
+			strcat(parValuesString, itoaconv(parValues[3]));
+			strcat(parValuesString, " ");
+			strcat(parValuesString, itoaconv(parValues[4]));
+			strcat(parValuesString, " ");
+
 			display_string(0, result);
 			display_string(1, score1);
-			display_string(2, "Total score: 1");
+			display_string(2, parValuesString);
 			display_string(3, "Push any button for next level!");
 			display_update();
 
@@ -339,6 +351,35 @@ void load_map_vector (int n){
 	switch (n)
 	{
 	case 1:
+
+
+		w.x = 0;
+		w.y = 0;
+		w.direction = 0;
+		w.length = 128;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 0;
+		w.y = 31;
+		w.direction = 0;
+		w.length = 128;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+		
+		w.x = 0;
+		w.y = 0;
+		w.direction = 90;
+		w.length = 32;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+		
+		w.x = 127;
+		w.y = 0;
+		w.direction = 90;
+		w.length = 32;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
 		
 		w.x = 50;
 		w.y = 22;
@@ -357,28 +398,28 @@ void load_map_vector (int n){
 		w.x = 60;
 		w.y = 16;
 		w.direction = 45;
-		w.length = 5;
+		w.length = 6;
 		wall_array[wall_array_length] = w;
 		wall_array_length++;
 
 		w.x = 60;
 		w.y = 16;
 		w.direction = -45;
-		w.length = 5;
+		w.length = 6;
 		wall_array[wall_array_length] = w;
 		wall_array_length++;
 
 		w.x = 70;
 		w.y = 16;
 		w.direction = -135;
-		w.length = 5;
+		w.length = 6;
 		wall_array[wall_array_length] = w;
 		wall_array_length++;
 
 		w.x = 70;
 		w.y = 16;
 		w.direction = 135;
-		w.length = 5;
+		w.length = 6;
 		wall_array[wall_array_length] = w;
 		wall_array_length++;
 		break;
@@ -392,6 +433,35 @@ void load_map_vector (int n){
 		}
 
 		tick += tickiterator;
+
+
+		w.x = 0;
+		w.y = 0;
+		w.direction = 0;
+		w.length = 128;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 0;
+		w.y = 31;
+		w.direction = 0;
+		w.length = 128;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+		
+		w.x = 0;
+		w.y = 0;
+		w.direction = 90;
+		w.length = 32;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+		
+		w.x = 127;
+		w.y = 0;
+		w.direction = 90;
+		w.length = 32;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
 		
 		w.x = 65;
 		w.y = 0;
@@ -410,33 +480,603 @@ void load_map_vector (int n){
 		w.x = 60;
 		w.y = 16;
 		w.direction = 45;
-		w.length = 5;
+		w.length = 6;
 		wall_array[wall_array_length] = w;
 		wall_array_length++;
 
 		w.x = 60;
 		w.y = 16;
 		w.direction = -45;
-		w.length = 5;
+		w.length = 6;
 		wall_array[wall_array_length] = w;
 		wall_array_length++;
 
 		w.x = 70;
 		w.y = 16;
 		w.direction = -135;
-		w.length = 5;
+		w.length = 6;
 		wall_array[wall_array_length] = w;
 		wall_array_length++;
 
 		w.x = 70;
 		w.y = 16;
 		w.direction = 135;
-		w.length = 5;
+		w.length = 6;
 		wall_array[wall_array_length] = w;
 		wall_array_length++;
 		break;
 
-	}
+	
+
+	case 3:
+		if (tick >= 12) {
+			tickiterator = -1;
+		}
+		if (tick <= 0) {
+			tickiterator = 1;
+		}
+
+		tick += tickiterator;
+
+
+		w.x = 0;
+		w.y = 0;
+		w.direction = 0;
+		w.length = 128;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 0;
+		w.y = 31;
+		w.direction = 0;
+		w.length = 128;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+		
+		w.x = 0;
+		w.y = 0;
+		w.direction = 90;
+		w.length = 32;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+		
+		w.x = 127;
+		w.y = 0;
+		w.direction = 90;
+		w.length = 32;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+		
+		w.x = 5;
+		w.y = 0;
+		w.direction = 45;
+		w.length = 11;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 25;
+		w.y = 0;
+		w.direction = 135;
+		w.length = 11;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 5;
+		w.y = 32;
+		w.direction = -45;
+		w.length = 11;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 25;
+		w.y = 32;
+		w.direction = -135;
+		w.length = 11;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 45;
+		w.y = 11;
+		w.direction = 90;
+		w.length = tick;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 25;
+		w.y = 16;
+		w.direction = 45;
+		w.length = 6;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 25;
+		w.y = 16;
+		w.direction = -45;
+		w.length = 6;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 35;
+		w.y = 16;
+		w.direction = -135;
+		w.length = 6;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 35;
+		w.y = 16;
+		w.direction = 135;
+		w.length = 6;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 75;
+		w.y = 22;
+		w.direction = -90;
+		w.length = 12 - tick;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 35;
+		w.y = 0;
+		w.direction = 45;
+		w.length = 11;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 55;
+		w.y = 0;
+		w.direction = 135;
+		w.length = 11;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 35;
+		w.y = 32;
+		w.direction = -45;
+		w.length = 11;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 55;
+		w.y = 32;
+		w.direction = -135;
+		w.length = 11;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 105;
+		w.y = 11;
+		w.direction = 90;
+		w.length = tick;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 55;
+		w.y = 16;
+		w.direction = 45;
+		w.length = 6;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 55;
+		w.y = 16;
+		w.direction = -45;
+		w.length = 6;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 65;
+		w.y = 16;
+		w.direction = -135;
+		w.length = 6;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 65;
+		w.y = 16;
+		w.direction = 135;
+		w.length = 6;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 65;
+		w.y = 0;
+		w.direction = 45;
+		w.length = 11;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 85;
+		w.y = 0;
+		w.direction = 135;
+		w.length = 11;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 65;
+		w.y = 32;
+		w.direction = -45;
+		w.length = 11;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 85;
+		w.y = 32;
+		w.direction = -135;
+		w.length = 11;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 85;
+		w.y = 16;
+		w.direction = 45;
+		w.length = 6;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 85;
+		w.y = 16;
+		w.direction = -45;
+		w.length = 6;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 95;
+		w.y = 16;
+		w.direction = -135;
+		w.length = 6;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 95;
+		w.y = 16;
+		w.direction = 135;
+		w.length = 6;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 95;
+		w.y = 0;
+		w.direction = 45;
+		w.length = 11;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 115;
+		w.y = 0;
+		w.direction = 135;
+		w.length = 11;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 95;
+		w.y = 32;
+		w.direction = -45;
+		w.length = 11;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 115;
+		w.y = 32;
+		w.direction = -135;
+		w.length = 11;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		
+
+		break;
+
+		case 4:
+		if (tick >= 13) {
+			tickiterator = -1;
+		}
+		if (tick <= -13) {
+			tickiterator = 1;
+		}
+
+		tick += tickiterator;
+
+
+		w.x = 0;
+		w.y = 0;
+		w.direction = 0;
+		w.length = 128;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 0;
+		w.y = 31;
+		w.direction = 0;
+		w.length = 128;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+		
+		w.x = 0;
+		w.y = 0;
+		w.direction = 90;
+		w.length = 32;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+		
+		w.x = 127;
+		w.y = 0;
+		w.direction = 90;
+		w.length = 32;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+		
+		w.x = 25;
+		w.y = 0;
+		w.direction = 90;
+		w.length = 13 + tick;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 25;
+		w.y = 32;
+		w.direction = -90;
+		w.length = 13 - tick;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 40;
+		w.y = 0;
+		w.direction = 90;
+		w.length = 13 - tick;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 40;
+		w.y = 32;
+		w.direction = -90;
+		w.length = 13 + tick;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 55;
+		w.y = 0;
+		w.direction = 90;
+		w.length = 13 + tick;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 55;
+		w.y = 32;
+		w.direction = -90;
+		w.length = 13 - tick;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 70;
+		w.y = 0;
+		w.direction = 90;
+		w.length = 13 - tick;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 70;
+		w.y = 32;
+		w.direction = -90;
+		w.length = 13 + tick;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 85;
+		w.y = 0;
+		w.direction = 90;
+		w.length = 13 + tick;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 85;
+		w.y = 32;
+		w.direction = -90;
+		w.length = 13 - tick;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 95;
+		w.y = 16;
+		w.direction = 45;
+		w.length = 5;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 95;
+		w.y = 16;
+		w.direction = -45;
+		w.length = 5;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		break;
+
+		case 5:
+
+		if (tick >= 15) {
+			tickiterator = -1;
+		}
+		if (tick <= 0) {
+			tickiterator = 1;
+		}
+
+		tick += tickiterator;
+
+		w.x = 0;
+		w.y = 0;
+		w.direction = 0;
+		w.length = 128;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 0;
+		w.y = 31;
+		w.direction = 0;
+		w.length = 128;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+		
+		w.x = 0;
+		w.y = 0;
+		w.direction = 90;
+		w.length = 32;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+		
+		w.x = 127;
+		w.y = 0;
+		w.direction = 90;
+		w.length = 32;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+		
+		w.x = 30;
+		w.y = 0;
+		w.direction = 90;
+		w.length = 13;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 30;
+		w.y = 12;
+		w.direction = 45;
+		w.length = 10;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 0;
+		w.y = 24;
+		w.direction = 0;
+		w.length = 28;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 35;
+		w.y = 32;
+		w.direction = -135;
+		w.length = 8;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 45;
+		w.y = 32;
+		w.direction = -45;
+		w.length = 8;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 50;
+		w.y = 0;
+		w.direction = 135;
+		w.length = 12;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 39;
+		w.y = 11;
+		w.direction = 90;
+		w.length = 11;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 60;
+		w.y = 0;
+		w.direction = 45;
+		w.length = 12;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 71;
+		w.y = 11;
+		w.direction = 90;
+		w.length = 11;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 53;
+		w.y = 23;
+		w.direction = 0;
+		w.length = 5;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 65;
+		w.y = 32;
+		w.direction = -135;
+		w.length = 8;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 76;
+		w.y = 32;
+		w.direction = -45;
+		w.length = 8;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 82;
+		w.y = 0;
+		w.direction = 135;
+		w.length = 12;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 90;
+		w.y = 0;
+		w.direction = 45;
+		w.length = 12 + tick;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 96;
+		w.y = 32;
+		w.direction = -135;
+		w.length = 8;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+		w.x = 84;
+		w.y = 23;
+		w.direction = 0;
+		w.length = 5;
+		wall_array[wall_array_length] = w;
+		wall_array_length++;
+
+
+
+		break;
+		// w.x = 60;
+		// w.y = 16;
+		// w.direction = 45;
+		// w.length = 5;
+		// wall_array[wall_array_length] = w;
+		// wall_array_length++;
+
+		// w.x = 60;
+		// w.y = 16;
+		// w.direction = -45;
+		// w.length = 5;
+		// wall_array[wall_array_length] = w;
+		// wall_array_length++;
+
+		// w.x = 70;
+		// w.y = 16;
+		// w.direction = -135;
+		// w.length = 5;
+		// wall_array[wall_array_length] = w;
+		// wall_array_length++;
+
+		// w.x = 70;
+		// w.y = 16;
+		// w.direction = 135;
+		// w.length = 5;
+		// wall_array[wall_array_length] = w;
+		// wall_array_length++;
+		// break;
+
+	}	
 
 	//init the background
 	draw_background();
