@@ -46,6 +46,17 @@ void display_debug( volatile int * const addr );
 extern const uint8_t const map1[32*16];
 /* Declare bitmap array containing font */
 extern const uint8_t const font[128*8];
+extern const uint8_t const icon[128];
+extern const uint8_t const intro1[128];
+extern const uint8_t const intro2[128];
+extern const uint8_t const intro3[128];
+extern const uint8_t const intro4[128];
+extern const uint8_t const golfBall[128];
+extern const uint8_t const intro3ball[128];
+extern const uint8_t const inst1[128];
+extern const uint8_t const inst2[128];
+extern const uint8_t const inst3[128];
+extern const uint8_t const inst4[128];
 /* Declare text buffer for display output */
 extern char textbuffer[4][16];
 
