@@ -55,10 +55,12 @@ int main(void) {
 	SPI2CONSET = 0x8000;
 	PORTFSET = 0b11111111;
 	display_init();
-	display_string(0, "Hello ");
-	display_string(1, "Minigolf Game");
-	display_string(2, "Loading Map");
-	display_string(3, "Welcome!");
+	// display_string(0, "Hello ");
+	// display_string(1, "Minigolf Game");
+	// display_string(2, "Loading Map");
+	// display_string(3, "Welcome!");
+	
+
 	display_update();
 	
 	//wait(1000);
