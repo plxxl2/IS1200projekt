@@ -12,9 +12,10 @@ asdf
 
 
 #include "golf.h"
+#include "maps.h"
 
 static int wall_array_length = 0;
-static struct wall wall_array[36];
+static struct wall wall_array[42];
 //static struct ball ballww;
 int startcount = 50; //some of these, (at least ballsize) can be defines instead, some are leftovers from labs. (textstring at least)
 double ballx = 16;
@@ -320,80 +321,22 @@ void user_isr( void )
 void load_map_vector (int n){
 	struct wall w;
 	wall_array_length = 0;
+	int i = 0;
 	switch (n)
 	{
 	case 1:
 
+		// Access and print the vectors
+		for (i; i < 12; ++i) {
+			w.x = map1vectors[i][0];
+			w.y = map1vectors[i][1];
+			w.direction = map1vectors[i][2];
+			w.length = map1vectors[i][3];
+			wall_array[wall_array_length] = w;
+			wall_array_length++;
+		}
+		i = 0;
 
-		w.x = 0;
-		w.y = 0;
-		w.direction = 0;
-		w.length = 128;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
-		w.x = 0;
-		w.y = 31;
-		w.direction = 0;
-		w.length = 128;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-		
-		w.x = 0;
-		w.y = 0;
-		w.direction = 90;
-		w.length = 32;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-		
-		w.x = 127;
-		w.y = 0;
-		w.direction = 90;
-		w.length = 32;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-		
-		w.x = 50;
-		w.y = 22;
-		w.direction = 90;
-		w.length = 10;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
-		w.x = 50;
-		w.y = 0;
-		w.direction = 90;
-		w.length = 10;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
-		w.x = 60;
-		w.y = 16;
-		w.direction = 45;
-		w.length = 6;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
-		w.x = 60;
-		w.y = 16;
-		w.direction = -45;
-		w.length = 6;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
-		w.x = 70;
-		w.y = 16;
-		w.direction = -135;
-		w.length = 6;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
-		w.x = 70;
-		w.y = 16;
-		w.direction = 135;
-		w.length = 6;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
 		break;
 	
 	case 2:
@@ -406,35 +349,17 @@ void load_map_vector (int n){
 
 		tick += tickiterator;
 
+		// Access and print the vectors
+		for (i; i < 10; ++i) {
+			w.x = map2vectors[i][0];
+			w.y = map2vectors[i][1];
+			w.direction = map2vectors[i][2];
+			w.length = map2vectors[i][3];
+			wall_array[wall_array_length] = w;
+			wall_array_length++;
+		}
+		i = 0;
 
-		w.x = 0;
-		w.y = 0;
-		w.direction = 0;
-		w.length = 128;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
-		w.x = 0;
-		w.y = 31;
-		w.direction = 0;
-		w.length = 128;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-		
-		w.x = 0;
-		w.y = 0;
-		w.direction = 90;
-		w.length = 32;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-		
-		w.x = 127;
-		w.y = 0;
-		w.direction = 90;
-		w.length = 32;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-		
 		w.x = 65;
 		w.y = 0;
 		w.direction = 90;
@@ -449,33 +374,6 @@ void load_map_vector (int n){
 		wall_array[wall_array_length] = w;
 		wall_array_length++;
 
-		w.x = 60;
-		w.y = 16;
-		w.direction = 45;
-		w.length = 6;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
-		w.x = 60;
-		w.y = 16;
-		w.direction = -45;
-		w.length = 6;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
-		w.x = 70;
-		w.y = 16;
-		w.direction = -135;
-		w.length = 6;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
-		w.x = 70;
-		w.y = 16;
-		w.direction = 135;
-		w.length = 6;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
 		break;
 
 	
@@ -490,95 +388,10 @@ void load_map_vector (int n){
 
 		tick += tickiterator;
 
-
-		w.x = 0;
-		w.y = 0;
-		w.direction = 0;
-		w.length = 128;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
-		w.x = 0;
-		w.y = 31;
-		w.direction = 0;
-		w.length = 128;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-		
-		w.x = 0;
-		w.y = 0;
-		w.direction = 90;
-		w.length = 32;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-		
-		w.x = 127;
-		w.y = 0;
-		w.direction = 90;
-		w.length = 32;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-		
-		w.x = 5;
-		w.y = 0;
-		w.direction = 45;
-		w.length = 11;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
-		w.x = 25;
-		w.y = 0;
-		w.direction = 135;
-		w.length = 11;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
-		w.x = 5;
-		w.y = 32;
-		w.direction = -45;
-		w.length = 11;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
-		w.x = 25;
-		w.y = 32;
-		w.direction = -135;
-		w.length = 11;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
 		w.x = 45;
 		w.y = 11;
 		w.direction = 90;
 		w.length = tick;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
-		w.x = 25;
-		w.y = 16;
-		w.direction = 45;
-		w.length = 6;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
-		w.x = 25;
-		w.y = 16;
-		w.direction = -45;
-		w.length = 6;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
-		w.x = 35;
-		w.y = 16;
-		w.direction = -135;
-		w.length = 6;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
-		w.x = 35;
-		w.y = 16;
-		w.direction = 135;
-		w.length = 6;
 		wall_array[wall_array_length] = w;
 		wall_array_length++;
 
@@ -589,34 +402,6 @@ void load_map_vector (int n){
 		wall_array[wall_array_length] = w;
 		wall_array_length++;
 
-		w.x = 35;
-		w.y = 0;
-		w.direction = 45;
-		w.length = 11;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
-		w.x = 55;
-		w.y = 0;
-		w.direction = 135;
-		w.length = 11;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
-		w.x = 35;
-		w.y = 32;
-		w.direction = -45;
-		w.length = 11;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
-		w.x = 55;
-		w.y = 32;
-		w.direction = -135;
-		w.length = 11;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
 		w.x = 105;
 		w.y = 11;
 		w.direction = 90;
@@ -624,117 +409,16 @@ void load_map_vector (int n){
 		wall_array[wall_array_length] = w;
 		wall_array_length++;
 
-		w.x = 55;
-		w.y = 16;
-		w.direction = 45;
-		w.length = 6;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
-		w.x = 55;
-		w.y = 16;
-		w.direction = -45;
-		w.length = 6;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
-		w.x = 65;
-		w.y = 16;
-		w.direction = -135;
-		w.length = 6;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
-		w.x = 65;
-		w.y = 16;
-		w.direction = 135;
-		w.length = 6;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
-		w.x = 65;
-		w.y = 0;
-		w.direction = 45;
-		w.length = 11;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
-		w.x = 85;
-		w.y = 0;
-		w.direction = 135;
-		w.length = 11;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
-		w.x = 65;
-		w.y = 32;
-		w.direction = -45;
-		w.length = 11;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
-		w.x = 85;
-		w.y = 32;
-		w.direction = -135;
-		w.length = 11;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
-		w.x = 85;
-		w.y = 16;
-		w.direction = 45;
-		w.length = 6;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
-		w.x = 85;
-		w.y = 16;
-		w.direction = -45;
-		w.length = 6;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
-		w.x = 95;
-		w.y = 16;
-		w.direction = -135;
-		w.length = 6;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
-		w.x = 95;
-		w.y = 16;
-		w.direction = 135;
-		w.length = 6;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
-		w.x = 95;
-		w.y = 0;
-		w.direction = 45;
-		w.length = 11;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
-		w.x = 115;
-		w.y = 0;
-		w.direction = 135;
-		w.length = 11;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
-		w.x = 95;
-		w.y = 32;
-		w.direction = -45;
-		w.length = 11;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
-		w.x = 115;
-		w.y = 32;
-		w.direction = -135;
-		w.length = 11;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
+		// Access and print the vectors
+		for (i; i < 38; ++i) {
+			w.x = map3vectors[i][0];
+			w.y = map3vectors[i][1];
+			w.direction = map3vectors[i][2];
+			w.length = map3vectors[i][3];
+			wall_array[wall_array_length] = w;
+			wall_array_length++;
+		}
+		i = 0;
 
 		
 
@@ -749,35 +433,6 @@ void load_map_vector (int n){
 		}
 
 		tick += tickiterator;
-
-
-		w.x = 0;
-		w.y = 0;
-		w.direction = 0;
-		w.length = 128;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
-		w.x = 0;
-		w.y = 31;
-		w.direction = 0;
-		w.length = 128;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-		
-		w.x = 0;
-		w.y = 0;
-		w.direction = 90;
-		w.length = 32;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-		
-		w.x = 127;
-		w.y = 0;
-		w.direction = 90;
-		w.length = 32;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
 		
 		w.x = 25;
 		w.y = 0;
@@ -849,19 +504,17 @@ void load_map_vector (int n){
 		wall_array[wall_array_length] = w;
 		wall_array_length++;
 
-		w.x = 95;
-		w.y = 16;
-		w.direction = 45;
-		w.length = 5;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
+				// Access and print the vectors
+		for (i; i < 7; ++i) {
+			w.x = map4vectors[i][0];
+			w.y = map4vectors[i][1];
+			w.direction = map4vectors[i][2];
+			w.length = map4vectors[i][3];
+			wall_array[wall_array_length] = w;
+			wall_array_length++;
+		}
+		i = 0;
 
-		w.x = 95;
-		w.y = 16;
-		w.direction = -45;
-		w.length = 5;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
 
 		break;
 
@@ -876,125 +529,6 @@ void load_map_vector (int n){
 
 		tick += tickiterator;
 
-		w.x = 0;
-		w.y = 0;
-		w.direction = 0;
-		w.length = 128;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
-		w.x = 0;
-		w.y = 31;
-		w.direction = 0;
-		w.length = 128;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-		
-		w.x = 0;
-		w.y = 0;
-		w.direction = 90;
-		w.length = 32;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-		
-		w.x = 127;
-		w.y = 0;
-		w.direction = 90;
-		w.length = 32;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-		
-		w.x = 30;
-		w.y = 0;
-		w.direction = 90;
-		w.length = 13;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
-		w.x = 30;
-		w.y = 12;
-		w.direction = 45;
-		w.length = 10;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
-		w.x = 0;
-		w.y = 24;
-		w.direction = 0;
-		w.length = 28;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
-		w.x = 35;
-		w.y = 32;
-		w.direction = -135;
-		w.length = 8;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
-		w.x = 45;
-		w.y = 32;
-		w.direction = -45;
-		w.length = 8;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
-		w.x = 50;
-		w.y = 0;
-		w.direction = 135;
-		w.length = 12;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
-		w.x = 39;
-		w.y = 11;
-		w.direction = 90;
-		w.length = 11;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
-		w.x = 60;
-		w.y = 0;
-		w.direction = 45;
-		w.length = 12;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
-		w.x = 71;
-		w.y = 11;
-		w.direction = 90;
-		w.length = 11;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
-		w.x = 53;
-		w.y = 23;
-		w.direction = 0;
-		w.length = 5;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
-		w.x = 65;
-		w.y = 32;
-		w.direction = -135;
-		w.length = 8;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
-		w.x = 76;
-		w.y = 32;
-		w.direction = -45;
-		w.length = 8;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
-		w.x = 82;
-		w.y = 0;
-		w.direction = 135;
-		w.length = 12;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
 		w.x = 90;
 		w.y = 0;
 		w.direction = 45;
@@ -1002,19 +536,16 @@ void load_map_vector (int n){
 		wall_array[wall_array_length] = w;
 		wall_array_length++;
 
-		w.x = 96;
-		w.y = 32;
-		w.direction = -135;
-		w.length = 8;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
-
-		w.x = 84;
-		w.y = 23;
-		w.direction = 0;
-		w.length = 5;
-		wall_array[wall_array_length] = w;
-		wall_array_length++;
+						// Access and print the vectors
+		for (i; i < 19; ++i) {
+			w.x = map5vectors[i][0];
+			w.y = map5vectors[i][1];
+			w.direction = map5vectors[i][2];
+			w.length = map5vectors[i][3];
+			wall_array[wall_array_length] = w;
+			wall_array_length++;
+		}
+		i = 0;
 
 
 
