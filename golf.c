@@ -241,7 +241,7 @@ void advance_game( void){ //advances the game 1 frame. om gamestate = aiming, ri
 			}
 
 
-			if (btns && !loadedmap && currentmap < 5) { // Go to next level when button is pressed
+			if (btns && !loadedmap && currentmap < 5 && !((btns & 8 ) == 8)) { // Go to next level when button is pressed
 				currentmap++;
 				clear_screen();
 				load_map_vector(currentmap);
