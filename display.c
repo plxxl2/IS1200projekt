@@ -20,21 +20,11 @@ void quicksleep(int cyc) {
 	for(i = cyc; i > 0; i--);
 }
 
-//static uint8_t map[4][128];
-static uint8_t screen[4][128];
-
-/* void set_map_pixel (int x, int y){
-	// figure out which page
-	int row = y % 8;
-	int page = (y - row) / 8;
+static uint8_t screen[4][128]; //array to hold fairly static background objects, making it simple to write a combination of objeckts it to the display
 
 
-	map[page][x] =map[page][x] |(0x1 << row);
-	return;
 
-} */
-
-void set_pixel (int x, int y){
+void set_pixel (int x, int y){ //turns "on" a pixel with coordinates (x,y) in the screen array.
 	//check out of bounds
 	if (x > 127 || x < 0 || y > 31 || y < 0) return;
 	// figure out which page
@@ -44,7 +34,7 @@ void set_pixel (int x, int y){
 	return;
 }
 
-void clear_display (void){
+void clear_display (void){ //sets all pixels in the screen array to 0 (turned off)
 	int i,j;
 	for (i = 0; i < 4; i++){
 		for (j = 0; j < 128; j++){
@@ -53,16 +43,8 @@ void clear_display (void){
 	}
 }
 
-/* void set_map(void){
-	int i,j;
-	for (i=0;i<4;i++){
-		for (j=0; j<128; j++){
-			screen[i][j] = map[i][j];
-		}
-		
-	}
-} */
-void clear_screen(void){
+
+void clear_screen(void){  //sets all pixels in the screen array to 0 (turned off)
 	int i,j;
 	for (i=0; i<4; i++){
 		for (j=0; j<128; j++){
@@ -71,7 +53,7 @@ void clear_screen(void){
 		
 	}
 }
-void set_ball(int x, int y){
+void set_ball(int x, int y){ //writes the multi pixel ball into the screenn array using center coordinnates, OLD NOT USED ANYMORE BECAUSE OF PERFORMANCE
 	int balldiameter = 3; //should be uneven atm
 	int i, j;
 	int edgedistance = (balldiameter - 1) / 2; // = 1
@@ -85,7 +67,7 @@ void set_ball(int x, int y){
 	}
 }
 
-void draw_hole(int x, int y){
+void draw_hole(int x, int y){ // draws a hole around input coordinates, into the screen array
 	//if size = 5;
 	// if raduis ==    3
 	//int end = 2 + (2 * 3);
@@ -126,7 +108,7 @@ void draw_walls(struct wall walls[]){ //might not work, based on an older (maybe
 	}
 }
 
-void draw_wall(struct wall n){
+void draw_wall(struct wall n){ //draws a wall (vector) into the screen array
 	double d = ((double)n.direction)*PI/180;
 	double scaling;
 	if (n.direction % 90 != 0) scaling = 1.415;
@@ -141,7 +123,7 @@ void draw_wall(struct wall n){
 	}
 }
 
-void draw_aim(double ballx, double bally, double aim){ //need to be able to draw the aim in the foreground. //could make it a separate array
+void draw_aim(double ballx, double bally, double aim){ //draws the aim line into the screen array, OLD NOT USED ANYMORE BECAUSE OF PERFORMANCE
 	int i;
 	double dx = cos(aim);
 	double dy = sin(aim);
@@ -152,7 +134,7 @@ void draw_aim(double ballx, double bally, double aim){ //need to be able to draw
 		x = (int)(ballx + (dx * distance));
 		y = (int)(bally + (dy * distance));
 		set_pixel(x, y);
-	}
+	}  //need to be able to draw the aim in the foreground. //could make it a separate array
 }
 
 /* void draw_pixel(int x, int y){
@@ -222,7 +204,7 @@ void draw_aim(double ballx, double bally, double aim){ //need to be able to draw
 } */
 
 
-void update_display(void){
+void update_display(void){ //draws the screen array onto the screen, maybe not used anymore because most frames use a version that injects the ball at this stage, to not force full redraws of the background array every frame
 	int i,j,z;
 	uint8_t drawsomething;
 	
@@ -264,7 +246,7 @@ void update_display(void){
 }
 
 
-void update_display_ball(int bx, int by){
+void update_display_ball(int bx, int by){ //Draws the screen array onto the screen & injects the ball onto the input coordinates. This means you dont have to redraw the whole background every frame, since usually the only moving object is the ball.
 	int i,j,z;
 	uint8_t drawsomething;
 	
@@ -307,7 +289,7 @@ void update_display_ball(int bx, int by){
 	}
 }
 
-void update_display_ball_aim(int bx, int by, double ballaim){
+void update_display_ball_aim(int bx, int by, double ballaim){ //Same as above, but injects both ball + aim line. Used while aimline is supposed to be visible.
 	int i,j,z;
 	uint8_t drawsomething;
 	
